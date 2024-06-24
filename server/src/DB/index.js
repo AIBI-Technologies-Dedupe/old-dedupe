@@ -34,14 +34,6 @@ db.state1 = require("./models/state1.model")(sequelize);
 db.status = require("./models/status.model")(sequelize);
 db.raw_data = require("./models/raw_data.model")(sequelize);
 
-db.raw_data.belongsTo(db.client, { foreignKey: 'client_id' });
-db.raw_data.belongsTo(db.product, { foreignKey: 'product_id' });
-db.raw_data.belongsTo(db.city, { foreignKey: 'city_id' });
-db.raw_data.belongsTo(db.state, { foreignKey: 'state_id' });
-db.raw_data.belongsTo(db.pincode, { foreignKey: 'pincode_id' });
-db.raw_data.belongsTo(db.city1, { foreignKey: 'city1_id' });
-db.raw_data.belongsTo(db.pincode1, { foreignKey: 'pincode1_id' });
-db.raw_data.belongsTo(db.state1, { foreignKey: 'state1_id' });
-db.raw_data.belongsTo(db.status, { foreignKey: 'status_id' });
+require("./associations")(db);
 
 module.exports = db;

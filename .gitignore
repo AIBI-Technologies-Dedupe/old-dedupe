@@ -1,6 +1,7 @@
 node_modules/
 
 server/src/uploads/*
+!server/src/uploads/
 
 .env
 .DS_Store

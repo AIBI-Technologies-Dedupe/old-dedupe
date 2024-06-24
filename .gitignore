@@ -1,7 +1,14 @@
 node_modules/
 
+# Ignore all contents inside the uploads folder
 server/src/uploads/*
+
+# Do not ignore the uploads folder itself
 !server/src/uploads/
+
+# Do not ignore the .gitkeep file
+!server/src/uploads/.gitkeep
+
 
 .env
 .DS_Store

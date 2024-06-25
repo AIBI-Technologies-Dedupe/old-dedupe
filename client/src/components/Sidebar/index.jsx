@@ -41,6 +41,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 			navigate("/login");
 		}
 	}, [isSuccess, navigate]);
+	console.log(user);
 	return (
 		<div
 			className={`bg-gray-200 md:w-[300px] flex flex-col gap-4 fixed md:static top-0 left-0 transition-transform transform ${

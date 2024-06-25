@@ -1,7 +1,9 @@
 import React from "react";
 import { days } from "../../utils/days";
 import InfoCard from "../../components/Info";
-import { FaBriefcase, FaUserCog, FaUsers } from "react-icons/fa";
+import { FaBriefcase, FaUserCog } from "react-icons/fa";
+import { useGetUsersQuery } from "../../api/users"; // Adjust the path as needed
+
 const Home = () => {
 	const date = new Date();
 	const offset =
@@ -11,7 +13,21 @@ const Home = () => {
 		normalized.toLocaleString("en-US", { timeZone: "Asia/Calcutta" })
 	);
 
-	console.log;
+	const { data, error, isLoading } = useGetUsersQuery();
+
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>Error loading users.</div>;
+
+	const users = data?.users ? [...data.users] : [];
+
+	// Sort users by creation date and get the 5 most recent ones
+	let recentUsers;
+	if (users.length) {
+		recentUsers = users
+			.slice()
+			.sort((a, b) => new Date(b.createdat) - new Date(a.createdat))
+			.slice(0, 5);
+	}
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex flex-col gap-2">
@@ -30,12 +46,7 @@ const Home = () => {
 					title="Cases"
 					icon={<FaBriefcase />}
 				/>
-				<InfoCard
-					color="green"
-					count={12}
-					title="Employees"
-					icon={<FaUserCog />}
-				/>
+				<InfoCard color="green" count={12} title="Users" icon={<FaUserCog />} />
 			</div>
 			<div className="flex flex-col gap-6 md:flex-row">
 				<div className="flex flex-col flex-1 gap-4">
@@ -50,19 +61,35 @@ const Home = () => {
 									Name
 								</th>
 								<th scope="col" className="px-6 py-3">
+									Email
+								</th>
+								<th scope="col" className="px-6 py-3">
+									Phone Number
+								</th>
+								<th scope="col" className="px-6 py-3">
+									Role
+								</th>
+								<th scope="col" className="px-6 py-3">
 									Created On
 								</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr className="bg-white">
-								<th
-									scope="row"
-									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-									Kunal Sharma
-								</th>
-								<td className="px-6 py-4">12/12/2002</td>
-							</tr>
+							{recentUsers.map((user) => (
+								<tr key={user.id} className="bg-white">
+									<th
+										scope="row"
+										className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+										{user.name}
+									</th>
+									<td className="px-6 py-4">{user.email}</td>
+									<td className="px-6 py-4">{user.phoneNo}</td>
+									<td className="px-6 py-4">{user.role.toUpperCase()}</td>
+									<td className="px-6 py-4">
+										{new Date(user.createdat).toLocaleDateString()}
+									</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>

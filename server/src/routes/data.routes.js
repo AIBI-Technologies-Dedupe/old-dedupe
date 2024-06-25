@@ -2,13 +2,15 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  importData,
-  deleteAllData,
+	importData,
+	deleteAllData,
+	getCount,
 } = require("../controllers/data.controller");
 const { upload } = require("../configs/multerConfig");
-const { verifyJWT } = require("../middleware/JWTutils");
+const { verifyJWT, checkAdmin } = require("../middleware/JWTutils");
 
 router.post("/import", verifyJWT, upload.single("file"), importData);
-router.delete("/delete", deleteAllData);
+router.post("/count", verifyJWT, checkAdmin, getCount);
+router.delete("/delete", verifyJWT, deleteAllData);
 
 module.exports = router;

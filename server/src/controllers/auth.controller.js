@@ -112,7 +112,10 @@ exports.login = asyncHandler(async (req, res) => {
 
 	res.status(200).json({ accessToken, user: userDetails });
 });
-
+exports.getCount = asyncHandler(async (req, res) => {
+	const { count } = await db.user.findAndCountAll();
+	res.status(200).json(count);
+});
 exports.refresh = asyncHandler(async (req, res) => {
 	const { jwt: refreshToken } = req.cookies;
 	if (!refreshToken) {

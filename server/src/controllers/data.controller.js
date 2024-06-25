@@ -2,11 +2,10 @@ const db = require("../DB/index");
 const ExcelJS = require("exceljs");
 const asyncHandler = require("express-async-handler");
 const { getOrInsert, convertDate } = require("../utils/dataUtils");
-const { handleError, handleSuccess } = require("../utils/responseHandler");
 
 exports.importData = asyncHandler(async (req, res) => {
   if (!req.file) {
-    return handleError(res, "No file uploaded", 400);
+    return res.status(400).json({ error: "No file uploaded" });
   }
 
   const filePath = req.file.path;
@@ -70,12 +69,13 @@ exports.importData = asyncHandler(async (req, res) => {
       });
     }
 
-    return handleSuccess(res, "Data imported successfully.");
+    res.status(200).json({ message: "Data imported successfully." });
   } catch (error) {
     console.error(error);
-    return handleError(res, "An error occurred while importing data.", 500);
+    res.status(500).json({ error: "An error occurred while importing data." });
   }
 });
+
 
 exports.deleteAllData = asyncHandler(async (req, res) => {
   try {
@@ -108,15 +108,14 @@ exports.deleteAllData = asyncHandler(async (req, res) => {
         await db.sequelize.query("ALTER TABLE state1s AUTO_INCREMENT = 1", { transaction });
         await db.sequelize.query("ALTER TABLE statuses AUTO_INCREMENT = 1", { transaction });
 
+        res.status(200).json({ message: "All data deleted and auto-increment IDs reset successfully." });
       } catch (innerError) {
         console.error(innerError);
         throw new Error("An error occurred while deleting data within transaction.");
       }
     });
-
-    return handleSuccess(res, "All data deleted and auto-increment IDs reset successfully.");
   } catch (error) {
     console.error(error);
-    return handleError(res, "An error occurred while deleting data.", 500);
+    res.status(500).json({ error: "An error occurred while deleting data." });
   }
 });

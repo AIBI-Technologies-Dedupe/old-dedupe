@@ -4,7 +4,6 @@ import { Navigate } from "react-router-dom";
 
 const AuthGuard = ({ element: Component }) => {
 	const token = useSelector((state) => state.auth.token);
-
 	return token ? <Component /> : <Navigate to="/login" />;
 };
 

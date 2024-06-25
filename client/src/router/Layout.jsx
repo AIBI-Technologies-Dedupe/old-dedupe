@@ -14,7 +14,7 @@ const Layout = () => {
 	return (
 		<div className="flex flex-col justify-between min-h-screen">
 			<Header toggleSidebar={toggleSidebar} />
-			<div className="flex flex-col md:flex-row bg-gray-50">
+			<div className="flex flex-col md:flex-row bg-gray-50 flex-1">
 				<Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 				<div className="w-full p-6 ">
 					<Outlet />

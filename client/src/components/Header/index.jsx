@@ -8,9 +8,6 @@ const Header = ({ toggleSidebar }) => {
 				<h1 className="font-bold">
 					<em>Dedupe</em>
 				</h1>
-				<h1 className="hidden text-xs font-bold md:block">
-					Automated Verification System
-				</h1>
 			</div>
 			<FaBars
 				className="text-xl cursor-pointer md:hidden"

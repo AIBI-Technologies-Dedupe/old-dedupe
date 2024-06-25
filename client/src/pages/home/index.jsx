@@ -67,34 +67,6 @@ const Home = () => {
 						</tbody>
 					</table>
 				</div>
-				<div className="flex flex-col flex-1 gap-4">
-					<h3 className="px-6 font-bold text-gray-700">
-						Recently Added Clients
-					</h3>
-
-					<table className="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
-						<thead className="text-xs text-gray-700 uppercase border-b border-gray-500 bg-gray-50">
-							<tr>
-								<th scope="col" className="px-6 py-3">
-									Name
-								</th>
-								<th scope="col" className="px-6 py-3">
-									Created On
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr className="bg-white">
-								<th
-									scope="row"
-									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-									Kunal Sharma
-								</th>
-								<td className="px-6 py-4">12/12/2002</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
 			</div>
 		</div>
 	);

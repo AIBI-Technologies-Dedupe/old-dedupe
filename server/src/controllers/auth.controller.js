@@ -13,9 +13,10 @@ const { handleError, handleSuccess } = require("../utils/responseHandler");
 const { where } = require("sequelize");
 
 exports.createUser = asyncHandler(async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, password, role, name, phoneNo } = req.body;
+  const createdBy = req.user ? req.user.email : 'system'; // Use 'system' or another default value for initial account creation
 
-  const { error } = userSchema.validate({ email, password, role });
+  const { error } = userSchema.validate({ email, password, role, name, phoneNo });
   if (error) return handleError(res, error.details[0].message, 400);
 
   const existingUser = await db.user.findOne({ where: { email } });
@@ -26,6 +27,11 @@ exports.createUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
     role,
+    name,
+    phoneNo,
+    createdBy,
+    modifiedBy: createdBy,
+    action: "create",
   });
 
   return handleSuccess(res, "User created successfully", newUser);
@@ -35,34 +41,47 @@ exports.login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const { error } = loginSchema.validate({ email, password });
-  if (error) return handleError(res, error.details[0].message, 400);
+  if (error) {
+    console.error('Validation error:', error.details[0].message);
+    return handleError(res, error.details[0].message, 400);
+  }
 
   const user = await db.user.findOne({ where: { email } });
-  if (!user) return handleError(res, "Invalid email or password", 401);
+  if (!user) {
+    return handleError(res, "Invalid email or password", 401);
+  }
 
   const match = await comparePassword(password, user.password);
-  if (!match) return handleError(res, "Invalid email or password", 401);
+  if (!match) {
+    return handleError(res, "Invalid email or password", 401);
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  let userHistory = await db.user_history.findOne({
-    where: { user_id: user.id, loginDate: today },
-  })
+  let userHistory;
+  try {
+    userHistory = await db.user_history.findOne({
+      where: {
+        user_id: user.id,
+        loginDate: today,
+      },
+    });
+  } catch (err) {
+    return handleError(res, 'Database query error', 500);
+  }
 
   if (userHistory) {
-    // If there's a record for today, increment the login count
     userHistory.loginCount += 1;
     await userHistory.save();
   } else {
-    // If there's no record for today, create a new record
     await db.user_history.create({
-      userId: user.id,
+      user_id: user.id,
       loginDate: today,
       loginCount: 1,
     });
   }
-  
+
   const accessToken = jwt.sign(
     { UserInfo: { id: user.id, email: user.email, role: user.role } },
     process.env.ACCESS_TOKEN_SECRET,
@@ -80,7 +99,6 @@ exports.login = asyncHandler(async (req, res) => {
     secure: true,
     maxAge: 3 * 60 * 60 * 1000,
   });
-
   return handleSuccess(res, "Login successful", { token: accessToken });
 });
 
@@ -114,9 +132,9 @@ exports.getAllUsers = asyncHandler(async (req, res) => {
 });
 
 exports.updateUser = asyncHandler(async (req, res) => {
-  const { id, newEmail, newPassword } = req.body;
+  const { id, newEmail, newPassword, newName, newPhoneno } = req.body;
 
-  const { error } = updateUserSchema.validate({ id, newEmail, newPassword });
+  const { error } = updateUserSchema.validate({ id, newEmail, newPassword,  newName, newPhoneno});
   if (error) return handleError(res, error.details[0].message, 400);
 
   const user = await db.user.findOne({ where: { id } });
@@ -124,7 +142,12 @@ exports.updateUser = asyncHandler(async (req, res) => {
 
   if (newEmail) user.email = newEmail;
   if (newPassword) user.password = await genPassword(newPassword);
+  if (newName) user.name = newName;
+  if (newPhoneno) user.phoneNo = newPhoneno;
 
+  user.modifiedAt = Date.now();
+  user.modifiedBy = req.user.email;
+  user.action = "update";
   await user.save();
   return handleSuccess(res, "User updated successfully", user);
 });
@@ -138,6 +161,29 @@ exports.deleteUser = asyncHandler(async (req, res) => {
   const user = await db.user.findOne({ where: { id } });
   if (!user) return handleError(res, "User not found", 404);
 
+  user.activated = false;
+  user.modifiedAt = Date.now();
+  user.modifiedBy = req.user.email;
+  user.action = "delete";
+
   await user.destroy();
+  return handleSuccess(res, "User deleted successfully");
+});
+
+exports.disableUser = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+
+  const { error } = deleteUserSchema.validate({ id });
+  if (error) return handleError(res, error.details[0].message, 400);
+
+  const user = await db.user.findOne({ where: { id } });
+  if (!user) return handleError(res, "User not found", 404);
+
+  user.activated = false;
+  user.modifiedAt = Date.now();
+  user.modifiedBy = req.user.email;
+  user.action = "disabled";
+
+  await user.save();
   return handleSuccess(res, "User deleted successfully");
 });

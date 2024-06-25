@@ -10,7 +10,8 @@ const {
   getAllUsers,
 } = require("../controllers/auth.controller");
 
-router.post("/signup", verifyJWT, checkAdmin, createUser);
+router.post("/signup",createUser); // for development purposes
+router.post("/createUser", verifyJWT, checkAdmin, createUser);
 router.post("/login", login);
 router.post("/refresh", verifyJWT, refresh);
 router.delete("/delete", verifyJWT, checkAdmin, deleteUser);

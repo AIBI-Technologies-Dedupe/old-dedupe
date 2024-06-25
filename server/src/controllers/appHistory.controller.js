@@ -4,30 +4,25 @@ const { Op } = require("sequelize");
 const { handleError, handleSuccess } = require("../utils/responseHandler");
 
 exports.getUserHistory = asyncHandler(async (req, res) => {
-  const loginHistory = await db.user_history.findAll({
-    attributes: [
-      "userId",
-      [db.Sequelize.fn("COUNT", db.Sequelize.col("userId")), "loginCount"],
-      [db.Sequelize.fn("MAX", db.Sequelize.col("loginDate")), "lastLoginDate"],
-    ],
+  const userHistory = await db.user_history.findAll({
     include: [
       {
         model: db.user,
-        attributes: ["id", "username", "password"],
+        attributes: ["id","email","password"],
       },
     ],
-    group: ["userId", "user.id"],
+    order: [["loginDate", "DESC"]],
   });
 
-  const history = loginHistory.map((record) => ({
-    id: record.user.id,
-    username: record.user.username,
-    password: record.user.password, // Assuming you have a function to decrypt passwords
-    loginCount: record.get("loginCount"),
-    lastLoginDate: record.get("lastLoginDate"),
+  const formattedHistories = userHistory.map(history => ({
+    id: history.user.id,
+    username: history.user.username,
+    email: history.user.email,
+    loginDate: history.loginDate,
+    loginCount: history.loginCount
   }));
 
-  if (!history) return handleError(res, "No login history found", 404);
+  if (!userHistory) return handleError(res, "No login history found", 404);
 
-  return handleSuccess(res, "Login history retrieved successfully", history);
+  return handleSuccess(res, "Login history retrieved successfully", formattedHistories);
 });

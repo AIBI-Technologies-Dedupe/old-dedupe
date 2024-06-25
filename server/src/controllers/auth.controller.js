@@ -10,6 +10,7 @@ const {
   comparePassword,
 } = require("../utils/authUtils");
 const { handleError, handleSuccess } = require("../utils/responseHandler");
+const { where } = require("sequelize");
 
 exports.createUser = asyncHandler(async (req, res) => {
   const { email, password, role } = req.body;
@@ -42,7 +43,25 @@ exports.login = asyncHandler(async (req, res) => {
   const match = await comparePassword(password, user.password);
   if (!match) return handleError(res, "Invalid email or password", 401);
 
-  await db.user_history.create({ user_id: user.id });
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let userHistory = await db.user_history.findOne({
+    where: { user_id: user.id, loginDate: today },
+  })
+
+  if (userHistory) {
+    // If there's a record for today, increment the login count
+    userHistory.loginCount += 1;
+    await userHistory.save();
+  } else {
+    // If there's no record for today, create a new record
+    await db.user_history.create({
+      userId: user.id,
+      loginDate: today,
+      loginCount: 1,
+    });
+  }
   
   const accessToken = jwt.sign(
     { UserInfo: { id: user.id, email: user.email, role: user.role } },

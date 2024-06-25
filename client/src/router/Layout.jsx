@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
@@ -16,11 +18,22 @@ const Layout = () => {
 			<Header toggleSidebar={toggleSidebar} />
 			<div className="flex flex-col md:flex-row bg-gray-50 flex-1">
 				<Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-				<div className="w-full p-6 ">
+				<div className="w-full p-6">
 					<Outlet />
 				</div>
 			</div>
 			<Footer />
+			<ToastContainer
+				position="top-right"
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
 		</div>
 	);
 };

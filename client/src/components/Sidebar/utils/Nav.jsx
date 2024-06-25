@@ -20,12 +20,16 @@ export const navLinks = [
 	{
 		name: "Logs",
 		Icon: <FaRegBookmark />,
-		to: "/",
+		to: "history/view",
 		subpages: null,
 	},
 	{
-		name: "Search",
+		name: "Cases",
 		Icon: <FaMagnifyingGlass />,
-		to: "/search",
+		to: null,
+		subpages: [
+			{ name: "Add Case", to: "/cases/add" },
+			{ name: "View Cases", to: "/cases/view" },
+		],
 	},
 ];

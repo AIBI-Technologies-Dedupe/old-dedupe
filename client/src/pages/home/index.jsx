@@ -30,7 +30,6 @@ const Home = () => {
 					title="Cases"
 					icon={<FaBriefcase />}
 				/>
-				<InfoCard color="red" count={12} title="Clients" icon={<FaUsers />} />
 				<InfoCard
 					color="green"
 					count={12}

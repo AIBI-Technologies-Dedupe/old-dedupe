@@ -3,10 +3,10 @@ import FormRow from "../../../components/Form/Row";
 import InputParent from "../../../components/Input/Parent";
 import ActionButton from "../../../components/Button/ActionButton";
 const AddUsers = () => {
-	const types = ["CRE", "DVE", "OF", "ADMIN", "SUPERVISOR"];
+	const types = ["USER", "ADMIN"];
 	return (
 		<div className="flex flex-col gap-6">
-			<h3 className="text-xl font-bold text-gray-800">Add Employees</h3>
+			<h3 className="text-xl font-bold text-gray-800">Add User</h3>
 			<form method="POST" className="flex flex-col gap-4">
 				<FormRow>
 					<InputParent>
@@ -30,7 +30,7 @@ const AddUsers = () => {
 				</FormRow>
 				<FormRow>
 					<InputParent>
-						<label className="text-sm">Employee Name</label>
+						<label className="text-sm">Name</label>
 						<input
 							type="text"
 							className="p-2 border border-gray-300 w-[100%]"
@@ -39,32 +39,11 @@ const AddUsers = () => {
 						/>
 					</InputParent>
 					<InputParent>
-						<label className="text-sm">Employee Type</label>
-						<select
-							name=""
-							id=""
-							className="p-2 border border-gray-300 w-[100%]">
-							<option value="" disabled selected hidden>
-								--Select Employee Type--
-							</option>
-							{types.map((e) => {
-								return <option value={e}>{e}</option>;
-							})}
-						</select>
-					</InputParent>
-					<InputParent>
-						<label className="text-sm">Supervisor</label>
-						<select className="p-2 border border-gray-300 w-[100%] " required>
-							<option value="" disabled selected hidden>
-								--Select Supervisor--
-							</option>
-							<option value="">Text</option>
-							<option value="">Dropdown</option>
-							<option value="">Email</option>
-							<option value="">Radio</option>
-							<option value="">Phone Number</option>
-							<option value="">Number</option>
-						</select>
+						<label className="text-sm">Phone Number</label>
+						<input
+							type="text"
+							className="p-2 border border-gray-300 w-[100%]"
+							placeholder="Phone Number"></input>
 					</InputParent>
 				</FormRow>
 

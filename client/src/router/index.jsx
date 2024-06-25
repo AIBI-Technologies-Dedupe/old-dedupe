@@ -7,7 +7,11 @@ import Layout from "./Layout";
 import AddUsers from "../pages/users/add";
 import ViewUsers from "../pages/users/view";
 
+import AddCases from "../pages/cases/add";
+import ViewCases from "../pages/cases/view";
+
 import AuthGuard from "./AuthGuard"; // Import the AuthGuard component
+import ViewHistory from "../pages/history";
 
 const router = createBrowserRouter([
 	{
@@ -22,6 +26,18 @@ const router = createBrowserRouter([
 			{
 				path: "users/add",
 				element: <AuthGuard element={AddUsers} />,
+			},
+			{
+				path: "cases/view",
+				element: <AuthGuard element={ViewCases} />,
+			},
+			{
+				path: "cases/add",
+				element: <AuthGuard element={AddCases} />,
+			},
+			{
+				path: "history/view",
+				element: <AuthGuard element={ViewHistory} />,
 			},
 		],
 	},

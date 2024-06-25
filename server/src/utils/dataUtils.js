@@ -10,3 +10,4 @@ exports.getOrInsert = async (model, column, value) => {
 exports.convertDate = (dateString) => {
   return new Date(dateString).toISOString().slice(0, 10);
 };
+

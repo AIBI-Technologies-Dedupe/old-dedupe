@@ -1,197 +1,124 @@
 const db = require("../DB/index");
 const jwt = require("jsonwebtoken");
-const { genPassword, comparePassword } = require("../utils/authUtils");
+const asyncHandler = require("express-async-handler");
+const {
+  userSchema,
+  loginSchema,
+  updateUserSchema,
+  deleteUserSchema,
+  genPassword,
+  comparePassword,
+} = require("../utils/authUtils");
+const { handleError, handleSuccess } = require("../utils/responseHandler");
 
-exports.createUser = async (req, res) => {
+exports.createUser = asyncHandler(async (req, res) => {
+  const { email, password, role } = req.body;
+
+  const { error } = userSchema.validate({ email, password, role });
+  if (error) return handleError(res, error.details[0].message, 400);
+
+  const existingUser = await db.user.findOne({ where: { email } });
+  if (existingUser) return handleError(res, "User already exists", 400);
+
+  const hashedPassword = await genPassword(password);
+  const newUser = await db.user.create({
+    email,
+    password: hashedPassword,
+    role,
+  });
+
+  return handleSuccess(res, "User created successfully", newUser);
+});
+
+exports.login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const { error } = loginSchema.validate({ email, password });
+  if (error) return handleError(res, error.details[0].message, 400);
+
+  const user = await db.user.findOne({ where: { email } });
+  if (!user) return handleError(res, "Invalid email or password", 401);
+
+  const match = await comparePassword(password, user.password);
+  if (!match) return handleError(res, "Invalid email or password", 401);
+
+  await db.user_history.create({ user_id: user.id });
+  
+  const accessToken = jwt.sign(
+    { UserInfo: { id: user.id, email: user.email, role: user.role } },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "3h" }
+  );
+
+  const refreshToken = jwt.sign(
+    { id: user.id },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "3h" }
+  );
+
+  res.cookie("jwt", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    maxAge: 3 * 60 * 60 * 1000,
+  });
+
+  return handleSuccess(res, "Login successful", { token: accessToken });
+});
+
+exports.refresh = asyncHandler(async (req, res) => {
+  const { jwt: refreshToken } = req.cookies;
+  if (!refreshToken) return handleError(res, "Unauthorized", 401);
+
   try {
-    const { email, password, role } = req.body;
-    console.log(req.body);
-    const existingUser = await db.user.findOne({ where: { email } });
-
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-    const hashedPassword = await genPassword(password);
-    const data = {
-      email,
-      password: hashedPassword,
-      role,
-    };
-    const User = await db.user.create(data);
-    res.status(201).json({
-      data: User,
-      Success: true,
-      message: "User created successfully",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Please provide email and password" });
-    }
-
-    const User = await db.user.findOne({ where: { email } });
-
-    const match = await comparePassword(password, User.password);
-
-    if (!match) {
-      return res.status(401).json({ message: "Unauthorized", success: false });
-    }
-
-    const accessToken = jwt.sign(
-      {
-        UserInfo: {
-          id: User.id,
-          email,
-          role: User.role,
-        },
-      },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "3h",
-      }
-    );
-
-    const refreshToken = jwt.sign(
-      {
-        id: User.id,
-      },
-      process.env.REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "3h",
-      }
-    );
-    res.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 3 * 60 * 60 * 1000,
-    });
-
-    res
-      .status(200)
-      .json({ Success: true, token: accessToken, message: "Login successful" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-exports.refresh = async (req, res) => {
-  try {
-    const cookies = req.cookies;
-
-    // Check if the JWT cookie exists
-    if (!cookies?.jwt) {
-      return res.status(401).json({ message: "Unauthorized", success: true });
-    }
-
-    const refreshToken = cookies.jwt;
-
-    // Verify the refresh token
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await db.user.findOne({ where: { id: decoded.id } });
+    if (!user) return handleError(res, "Unauthorized", 401);
 
-    let foundUser;
-
-    // Determine if the user is of a specific type and find them in the database
-    foundUser = await db.user.findOne({
-      where: { id: decoded.id },
-    });
-
-    // If the user is not found, respond with Unauthorized
-    if (!foundUser) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    // Create a new access token
     const accessToken = jwt.sign(
-      {
-        UserInfo: {
-          id: foundUser.id,
-          email: foundUser.email,
-        },
-      },
+      { UserInfo: { id: user.id, email: user.email, role: user.role } },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "3h" }
     );
 
-    res.json({ accessToken });
+    return handleSuccess(res, "Token refreshed successfully", { accessToken });
   } catch (err) {
-    // Handle errors that occur during JWT verification or database operations
-    if (err.name === "TokenExpiredError") {
-      return res
-        .status(403)
-        .json({ message: "Token expired, please login again." });
+    if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
+      return handleError(res, "Invalid token, please login again.", 403);
     }
-    if (err.name === "JsonWebTokenError") {
-      return res
-        .status(403)
-        .json({ message: "Invalid token, please login again." });
-    }
-    // Handle other errors
-    return res.status(500).json({ message: "Internal server error." });
+    return handleError(res, "Internal server error.", 500);
   }
-};
+});
 
-exports.getAllUsers = async (req, res) => {
-  try {
-    const users = await db.user.findAll();
-    res.status(200).json({ data: users, Success: true });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+exports.getAllUsers = asyncHandler(async (req, res) => {
+  const users = await db.user.findAll();
+  return handleSuccess(res, "Users retrieved successfully", users);
+});
 
-exports.updateUser = async (req, res) => {
-  try {
-    const { id, newEmail, newPassword } = req.body;
+exports.updateUser = asyncHandler(async (req, res) => {
+  const { id, newEmail, newPassword } = req.body;
 
-    const user = await db.user.findOne({ where: { id } });
+  const { error } = updateUserSchema.validate({ id, newEmail, newPassword });
+  if (error) return handleError(res, error.details[0].message, 400);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+  const user = await db.user.findOne({ where: { id } });
+  if (!user) return handleError(res, "User not found", 404);
 
-    if (newEmail) {
-      user.email = newEmail;
-    }
+  if (newEmail) user.email = newEmail;
+  if (newPassword) user.password = await genPassword(newPassword);
 
-    if (newPassword) {
-      user.password = await genPassword(newPassword);
-    }
-    await user.save();
-    res
-      .status(200)
-      .json({ Success: true, message: "User updated successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+  await user.save();
+  return handleSuccess(res, "User updated successfully", user);
+});
 
-exports.deleteUser = async (req, res) => {
-  try {
-    const { id } = req.body;
+exports.deleteUser = asyncHandler(async (req, res) => {
+  const { id } = req.body;
 
-    const user = await db.user.findOne({ where: { id } });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    await user.destroy();
-    res
-      .status(200)
-      .json({ Success: true, message: "User deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+  const { error } = deleteUserSchema.validate({ id });
+  if (error) return handleError(res, error.details[0].message, 400);
+
+  const user = await db.user.findOne({ where: { id } });
+  if (!user) return handleError(res, "User not found", 404);
+
+  await user.destroy();
+  return handleSuccess(res, "User deleted successfully");
+});

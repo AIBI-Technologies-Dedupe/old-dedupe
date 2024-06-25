@@ -1,0 +1,162 @@
+const db = require("../DB/index");
+const { Op } = require("sequelize");
+const asyncHandler = require("express-async-handler");
+const { handleError, handleSuccess } = require("../utils/responseHandler");
+
+exports.searchRecords = asyncHandler(async (req, res) => {
+  try {
+    let fieldNames = req.query.field_name;
+    let searchTerms = req.query.search_term;
+
+    if (!Array.isArray(fieldNames)) {
+      fieldNames = fieldNames ? [fieldNames] : [];
+    }
+
+    if (!Array.isArray(searchTerms)) {
+      searchTerms = searchTerms ? [searchTerms] : [];
+    }
+
+    // List of valid fields
+    const validFields = [
+      "first_name",
+      "middle_name",
+      "last_name",
+      "father_name",
+      "dob",
+      "login_date",
+      "residence_address",
+      "residence_area",
+      "company_name",
+      "office_address",
+      "compnay_area_name",
+      "email_id",
+      "aadhar_number",
+      "pan_number",
+      "passport_number",
+      "election_id_number",
+      "vehicle_number",
+      "dl_number",
+      "remarks",
+      "client_name",
+      "product_name",
+      "residence_city_name",
+      "residence_state_name",
+      "residence_pincode",
+      "company_city_name",
+      "company_pincode",
+      "company_state_name",
+      "status_name",
+    ];
+
+    const conditions = [];
+
+    // Build conditions for each valid field
+    for (let i = 0; i < fieldNames.length; i++) {
+      const fieldName = fieldNames[i];
+      const searchTerm = searchTerms[i];
+
+      if (validFields.includes(fieldName) && searchTerm) {
+        const searchValue = `%${searchTerm.toUpperCase()}%`;
+        switch (fieldName) {
+          case "client_name":
+            conditions.push({ "$client.name$": { [Op.like]: searchValue } });
+            break;
+          case "product_name":
+            conditions.push({ "$product.name$": { [Op.like]: searchValue } });
+            break;
+          case "residence_city_name":
+            conditions.push({ "$city.name$": { [Op.like]: searchValue } });
+            break;
+          case "residence_state_name":
+            conditions.push({ "$state.name$": { [Op.like]: searchValue } });
+            break;
+          case "residence_pincode":
+            conditions.push({ "$pincode.code$": { [Op.like]: searchValue } });
+            break;
+          case "company_city_name":
+            conditions.push({ "$city1.name$": { [Op.like]: searchValue } });
+            break;
+          case "company_pincode":
+            conditions.push({ "$pincode1.code$": { [Op.like]: searchValue } });
+            break;
+          case "company_state_name":
+            conditions.push({ "$state1.name$": { [Op.like]: searchValue } });
+            break;
+          case "status_name":
+            conditions.push({ "$status.name$": { [Op.like]: searchValue } });
+            break;
+          default:
+            conditions.push({ [fieldName]: { [Op.like]: searchValue } });
+            break;
+        }
+      }
+    }
+
+    if (conditions.length === 0) {
+      return handleError(res, "At least one valid field and search term must be provided", 400);
+    }
+
+    // Query the database
+    const records = await db.raw_data.findAll({
+      where: { [Op.and]: conditions },
+      include: [
+        { model: db.client, as: "client", attributes: ["id", "name"] },
+        { model: db.product, as: "product", attributes: ["id", "name"] },
+        { model: db.city, as: "city", attributes: ["id", "name"] },
+        { model: db.state, as: "state", attributes: ["id", "name"] },
+        { model: db.pincode, as: "pincode", attributes: ["id", "code"] },
+        { model: db.city1, as: "city1", attributes: ["id", "name"] },
+        { model: db.pincode1, as: "pincode1", attributes: ["id", "code"] },
+        { model: db.state1, as: "state1", attributes: ["id", "name"] },
+        { model: db.status, as: "status", attributes: ["id", "name"] },
+      ],
+    });
+
+    if (records.length === 0) {
+      return handleError(res, "No records found", 404);
+    }
+
+    // Transform response to include readable names
+    const response = records.map((record) => ({
+      id: record.id,
+      client_name: record.client ? record.client.name : null,
+      product_name: record.product ? record.product.name : null,
+      login_date: record.login_date,
+      first_name: record.first_name,
+      middle_name: record.middle_name,
+      last_name: record.last_name,
+      father_name: record.father_name,
+      dob: record.dob,
+      door_no: record.door_no,
+      residence_address: record.residence_address,
+      area: record.area,
+      residence_city_name: record.city ? record.city.name : null,
+      residence_state_name: record.state ? record.state.name : null,
+      residence_pincode: record.pincode ? record.pincode.code : null,
+      company_name: record.company_name,
+      office_address: record.office_address,
+      residence_area: record.area1,
+      company_city_name: record.city1 ? record.city1.name : null,
+      company_pincode: record.pincode1 ? record.pincode1.code : null,
+      company_state_name: record.state1 ? record.state1.name : null,
+      residence_landline: record.residence_landline,
+      office_landline: record.office_landline,
+      mobile1: record.mobile1,
+      mobile2: record.mobile2,
+      email_id: record.email_id,
+      aadhar_number: record.aadhar_number,
+      pan_number: record.pan_number,
+      passport_number: record.passport_number,
+      election_id_number: record.election_id_number,
+      vehicle_number: record.vehicle_number,
+      dl_number: record.dl_number,
+      status_name: record.status ? record.status.name : null,
+      remarks: record.remarks,
+    }));
+
+    return handleSuccess(res, "Records found", response);
+  } catch (error) {
+    console.error("Error fetching records:", error);
+    return handleError(res, "Internal Server Error", 500);
+  }
+});

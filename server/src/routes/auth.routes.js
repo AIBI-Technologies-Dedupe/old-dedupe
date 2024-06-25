@@ -12,7 +12,7 @@ const {
 
 router.post("/signup", verifyJWT, checkAdmin, createUser);
 router.post("/login", login);
-router.post("/refresh", refresh);
+router.post("/refresh", verifyJWT, refresh);
 router.delete("/delete", verifyJWT, checkAdmin, deleteUser);
 router.put("/update", verifyJWT, checkAdmin, updateUser);
 router.get("/getusers", verifyJWT, checkAdmin, getAllUsers);

@@ -1,67 +1,37 @@
 const db = require("../DB/index");
 const ExcelJS = require("exceljs");
+const asyncHandler = require("express-async-handler");
 const { getOrInsert, convertDate } = require("../utils/dataUtils");
+const { handleError, handleSuccess } = require("../utils/responseHandler");
 
-exports.importData = async (req, res) => {
+exports.importData = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return handleError(res, "No file uploaded", 400);
+  }
+
+  const filePath = req.file.path;
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(filePath);
+
+  const worksheet = workbook.getWorksheet(1);
+
   try {
-    if (!req.file) {
-      return res.status(400).send({ message: "No file uploaded" });
-    }
-
-    const filePath = req.file.path;
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.readFile(filePath);
-
-    const worksheet = workbook.getWorksheet(1);
-
     for (let i = 2; i <= worksheet.rowCount; i++) {
       const row = worksheet.getRow(i);
 
       if (row.getCell(1).value === "client_id") continue;
 
-      const client_id = await getOrInsert(
-        db.client,
-        "name",
-        row.getCell(1).value
-      );
-      const product_id = await getOrInsert(
-        db.product,
-        "name",
-        row.getCell(2).value
-      );
+      const client_id = await getOrInsert(db.client, "name", row.getCell(1).value);
+      const product_id = await getOrInsert(db.product, "name", row.getCell(2).value);
       const loginDateFormatted = convertDate(row.getCell(3).value);
       const dobFormatted = convertDate(row.getCell(8).value);
       const city_id = await getOrInsert(db.city, "name", row.getCell(12).value);
-      const state_id = await getOrInsert(
-        db.state,
-        "name",
-        row.getCell(13).value
-      );
-      const pincode_id = await getOrInsert(
-        db.pincode,
-        "code",
-        row.getCell(14).value
-      );
-      const city1_id = await getOrInsert(
-        db.city1,
-        "name",
-        row.getCell(18).value
-      );
-      const pincode1_id = await getOrInsert(
-        db.pincode1,
-        "code",
-        row.getCell(19).value
-      );
-      const state1_id = await getOrInsert(
-        db.state1,
-        "name",
-        row.getCell(20).value
-      );
-      const status_id = await getOrInsert(
-        db.status,
-        "name",
-        row.getCell(32).value
-      );
+      const state_id = await getOrInsert(db.state, "name", row.getCell(13).value);
+      const pincode_id = await getOrInsert(db.pincode, "code", row.getCell(14).value);
+      const city1_id = await getOrInsert(db.city1, "name", row.getCell(18).value);
+      const pincode1_id = await getOrInsert(db.pincode1, "code", row.getCell(19).value);
+      const state1_id = await getOrInsert(db.state1, "name", row.getCell(20).value);
+      const status_id = await getOrInsert(db.status, "name", row.getCell(32).value);
 
       await db.raw_data.create({
         client_id,
@@ -100,11 +70,53 @@ exports.importData = async (req, res) => {
       });
     }
 
-    return res.status(200).send({ message: "Data imported successfully." });
+    return handleSuccess(res, "Data imported successfully.");
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .send({ message: "An error occurred while importing data." });
+    return handleError(res, "An error occurred while importing data.", 500);
   }
-};
+});
+
+exports.deleteAllData = asyncHandler(async (req, res) => {
+  try {
+    // Start a transaction
+    await db.sequelize.transaction(async (transaction) => {
+      try {
+        // Delete from raw_data first
+        await db.raw_data.destroy({ where: {}, transaction });
+
+        // Delete from related tables
+        await db.client.destroy({ where: {}, transaction });
+        await db.product.destroy({ where: {}, transaction });
+        await db.city.destroy({ where: {}, transaction });
+        await db.state.destroy({ where: {}, transaction });
+        await db.pincode.destroy({ where: {}, transaction });
+        await db.city1.destroy({ where: {}, transaction });
+        await db.pincode1.destroy({ where: {}, transaction });
+        await db.state1.destroy({ where: {}, transaction });
+        await db.status.destroy({ where: {}, transaction });
+
+        // Reset auto-increment IDs
+        await db.sequelize.query("ALTER TABLE raw_data AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE clients AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE products AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE cities AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE states AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE pincodes AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE city1s AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE pincode1s AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE state1s AUTO_INCREMENT = 1", { transaction });
+        await db.sequelize.query("ALTER TABLE statuses AUTO_INCREMENT = 1", { transaction });
+
+      } catch (innerError) {
+        console.error(innerError);
+        throw new Error("An error occurred while deleting data within transaction.");
+      }
+    });
+
+    return handleSuccess(res, "All data deleted and auto-increment IDs reset successfully.");
+  } catch (error) {
+    console.error(error);
+    return handleError(res, "An error occurred while deleting data.", 500);
+  }
+});

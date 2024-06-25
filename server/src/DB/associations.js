@@ -10,5 +10,7 @@ module.exports = (db) => {
     db.raw_data.belongsTo(db.pincode1, { foreignKey: 'pincode1_id' });
     db.raw_data.belongsTo(db.state1, { foreignKey: 'state1_id' });
     db.raw_data.belongsTo(db.status, { foreignKey: 'status_id' });
+    db.user.hasMany(db.user_history, { foreignKey: 'userId' });
+    db.user_history.belongsTo(db.user, { foreignKey: 'userId' });
   };
   

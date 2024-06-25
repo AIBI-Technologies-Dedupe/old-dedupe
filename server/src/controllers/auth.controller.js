@@ -187,3 +187,12 @@ exports.disableUser = asyncHandler(async (req, res) => {
   await user.save();
   return handleSuccess(res, "User deleted successfully");
 });
+
+exports.logout = (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) {
+    return handleError(res, "No token found", 200);
+  }
+  res.clearCookie("jwt", { httpOnly: true, secure: true });
+  return handleSuccess(res, "Logout successful");
+};

@@ -18,4 +18,5 @@ export const usersApi = apiSlice.injectEndpoints({
 	}),
 });
 
-export const { useSignupMutation, useGetUsersQuery } = usersApi;
+export const { useSignupMutation, useGetUsersQuery, useCountUsersQuery } =
+	usersApi;

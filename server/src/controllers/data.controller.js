@@ -109,8 +109,9 @@ exports.importData = asyncHandler(async (req, res) => {
 });
 
 exports.getCount = asyncHandler(async (req, res) => {
-	const { count } = await db.sequelize.raw_data.findAndCountAll();
-	return res.status(200).json(count);
+	const { count, row } = await db.raw_data.findAndCountAll();
+
+	return res.status(200).json({ count });
 });
 exports.deleteAllData = asyncHandler(async (req, res) => {
 	try {

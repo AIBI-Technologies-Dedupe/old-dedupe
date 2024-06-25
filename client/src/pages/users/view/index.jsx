@@ -8,7 +8,7 @@ const ViewUsers = () => {
 	if (error) return <div>Error loading users.</div>;
 
 	const users = data?.users || [];
-	console.log(users);
+
 	return (
 		<div>
 			<h3 className="text-xl font-bold text-gray-800">Users List</h3>

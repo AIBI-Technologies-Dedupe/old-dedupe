@@ -28,7 +28,6 @@ const login = () => {
 				setPassword("");
 				navigate("/");
 			} catch (err) {
-				console.log(err);
 				if (!err.status) {
 					alert("No Server Response");
 				} else if (err.status === 400) {

@@ -108,6 +108,7 @@ exports.login = asyncHandler(async (req, res) => {
 	userDetails = {
 		id: user.id,
 		name: user.name,
+		role: user.role,
 	};
 
 	res.status(200).json({ accessToken, user: userDetails });

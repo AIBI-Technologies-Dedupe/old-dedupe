@@ -3,12 +3,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaCircle } from "react-icons/fa6";
 import { GoChevronLeft } from "react-icons/go";
 import Profile from "../../assets/profile/profile1.jpg";
-import { navLinks } from "./utils/Nav";
+import { getNavLinks } from "./utils/Nav";
 
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useSendLogoutMutation } from "../../features/auth/authApiSlice";
 import { useSelector } from "react-redux";
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+	const role = useSelector((state) => state.auth.user.role);
+	const navLinks = getNavLinks(role);
 	const [sendLogout, { isLoading, isSuccess, isError, error }] =
 		useSendLogoutMutation();
 	const [openSubMenu, setOpenSubMenu] = useState(null);
@@ -44,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
 	return (
 		<div
-			className={`bg-gray-200 md:w-[300px] flex flex-col gap-4 fixed md:static top-0 left-0 transition-transform transform ${
+			className={`h-full md:h-dvh bg-blue-900 md:w-[300px] flex flex-col gap-4 fixed md:static top-0 left-0 transition-transform transform ${
 				isOpen ? "translate-x-0" : "-translate-x-full"
 			} md:translate-x-0 z-50`}>
 			<div className="p-4 font-semibold bg-gray-900">
@@ -59,14 +61,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col gap-3 px-4 pb-4 text-gray-800">
+			<div className="flex flex-col gap-3 px-4 pb-4 text-white ">
 				{navLinks.map((link) => (
 					<div key={link.name}>
 						{link.to ? (
 							<Link
 								to={link.to}
 								className={`flex items-center gap-1 p-2 ${
-									isActive(link.to) ? "text-purple-500" : ""
+									isActive(link.to) ? "text-red-500" : ""
 								} hover:font-bold transition-all ease-in-out`}
 								onClick={handleLinkClick}>
 								{link.Icon}
@@ -79,7 +81,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 									className="flex items-center justify-between w-[100%] p-2 hover:font-bold transition-all ease-in-out">
 									<div
 										className={`${
-											isGroupActive(link) ? "text-purple-500" : ""
+											isGroupActive(link) ? "text-red-500" : ""
 										} flex items-center gap-1 `}>
 										{link.Icon}
 										{link.name}
@@ -101,7 +103,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 													key={subpage.name}
 													to={subpage.to}
 													className={`block hover:font-bold transition-all ease-in-out ${
-														isActive(subpage.to) ? "text-purple-500" : ""
+														isActive(subpage.to) ? "text-red-500" : ""
 													}`}
 													onClick={handleLinkClick}>
 													{subpage.name}
@@ -117,7 +119,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 					onClick={() => {
 						sendLogout();
 					}}
-					className="flex items-center justify-center gap-1 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-400 hover:cursor-pointer">
+					className="flex items-center justify-center gap-1 p-2 text-white bg-red-500 rounded-md hover:bg-blue-400 hover:cursor-pointer">
 					Logout
 				</p>
 			</div>

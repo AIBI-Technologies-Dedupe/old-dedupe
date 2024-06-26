@@ -4,6 +4,6 @@ const { verifyJWT } = require("../middleware/JWTutils");
 
 const router = express.Router();
 
-router.get("/",verifyJWT, searchRecords);
+router.post("/", verifyJWT, searchRecords);
 
 module.exports = router;

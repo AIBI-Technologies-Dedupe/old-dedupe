@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
 	return (
 		<div
-			className={`h-full md:h-dvh bg-blue-900 md:w-[300px] flex flex-col gap-4 fixed md:static top-0 left-0 transition-transform transform ${
+			className={`h-[100%] md:h-dvh bg-blue-900 md:w-[300px] flex flex-col gap-4 fixed md:static top-0 left-0 transition-transform transform ${
 				isOpen ? "translate-x-0" : "-translate-x-full"
 			} md:translate-x-0 z-50`}>
 			<div className="p-4 font-semibold bg-gray-900">

@@ -1,4 +1,9 @@
-import { FaHome, FaRegBookmark, FaUsersCog } from "react-icons/fa";
+import {
+	FaHome,
+	FaRegBookmark,
+	FaUsersCog,
+	FaFileImport,
+} from "react-icons/fa";
 import { FaMagnifyingGlass, FaWpforms } from "react-icons/fa6";
 
 export const getNavLinks = (userRole) => {
@@ -25,13 +30,16 @@ export const getNavLinks = (userRole) => {
 			subpages: null,
 		},
 		{
-			name: "Cases",
+			name: "Search",
 			Icon: <FaMagnifyingGlass />,
-			to: null,
-			subpages: [
-				{ name: "Import", to: "/cases/add" },
-				{ name: "Search", to: "/cases/view" },
-			],
+			to: "/cases/view",
+			subpages: null,
+		},
+		{
+			name: "Import",
+			Icon: <FaFileImport />,
+			to: "/cases/add",
+			subpages: null,
 		},
 	];
 

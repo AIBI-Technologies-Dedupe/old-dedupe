@@ -6,6 +6,7 @@ import { useUploadFileMutation } from "../../../api/data";
 import FormRow from "../../../components/Form/Row";
 import InputParent from "../../../components/Input/Parent";
 import ActionButton from "../../../components/Button/ActionButton";
+import { ClipLoader } from "react-spinners";
 
 const AddCases = () => {
 	const [file, setFile] = useState(null);
@@ -37,27 +38,35 @@ const AddCases = () => {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<h3 className="text-xl font-bold text-gray-800">Import File</h3>
-			<form
-				method="POST"
-				className="flex flex-col gap-4"
-				onSubmit={handleSubmit}>
-				<FormRow>
-					<InputParent>
-						<label className="text-sm">File</label>
-						<input
-							type="file"
-							accept=".xlsx"
-							className="p-2 border border-gray-300 w-[100%]"
-							onChange={handleFileChange}
-							required
-						/>
-					</InputParent>
-				</FormRow>
-				<ActionButton type="submit" disabled={isLoading}>
-					{isLoading ? "Importing..." : "Import"}
-				</ActionButton>
-			</form>
+			{isLoading ? (
+				<div className="flex items-center justify-center h-full">
+					<ClipLoader size={50} color={"#123abc"} loading={isLoading} />
+				</div>
+			) : (
+				<>
+					<h3 className="text-xl font-bold text-gray-800">Import File</h3>
+					<form
+						method="POST"
+						className="flex flex-col gap-4"
+						onSubmit={handleSubmit}>
+						<FormRow>
+							<InputParent>
+								<label className="text-sm">File</label>
+								<input
+									type="file"
+									accept=".xlsx"
+									className="p-2 border border-gray-300 w-[100%]"
+									onChange={handleFileChange}
+									required
+								/>
+							</InputParent>
+						</FormRow>
+						<ActionButton type="submit" disabled={isLoading}>
+							{isLoading ? "Importing..." : "Import"}
+						</ActionButton>
+					</form>
+				</>
+			)}
 		</div>
 	);
 };

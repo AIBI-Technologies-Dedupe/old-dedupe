@@ -4,8 +4,8 @@ const asyncHandler = require("express-async-handler");
 
 
 exports.searchRecords = asyncHandler(async (req, res) => {
-  let fieldNames = req.query.field_name;
-  let searchTerms = req.query.search_term;
+  let fieldNames = req.body.field_name;
+  let searchTerms = req.body.search_term;
 
   if (!Array.isArray(fieldNames)) {
     fieldNames = fieldNames ? [fieldNames] : [];

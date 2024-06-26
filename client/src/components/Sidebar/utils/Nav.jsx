@@ -29,8 +29,8 @@ export const getNavLinks = (userRole) => {
 			Icon: <FaMagnifyingGlass />,
 			to: null,
 			subpages: [
-				{ name: "Add Case", to: "/cases/add" },
-				{ name: "View Cases", to: "/cases/view" },
+				{ name: "Import", to: "/cases/add" },
+				{ name: "Search", to: "/cases/view" },
 			],
 		},
 	];

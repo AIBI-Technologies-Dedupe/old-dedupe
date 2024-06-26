@@ -19,7 +19,7 @@ const router = createBrowserRouter([
 		path: "/",
 		element: <Layout />,
 		children: [
-			{ path: "/", element: <AuthGuard element={Home} /> },
+			{ path: "/", element: <AdminGuard element={Home} /> },
 			{
 				path: "users/view",
 				element: <AdminGuard element={ViewUsers} />,

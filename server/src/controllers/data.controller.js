@@ -1,7 +1,7 @@
 const db = require("../DB/index");
 const ExcelJS = require("exceljs");
 const asyncHandler = require("express-async-handler");
-const { getOrInsert, convertDate } = require("../utils/dataUtils");
+const { getOrInsert, convertDate, convertString } = require("../utils/dataUtils");
 
 exports.importData = asyncHandler(async (req, res) => {
 	if (!req.file) {
@@ -32,6 +32,7 @@ exports.importData = asyncHandler(async (req, res) => {
 			);
 			const loginDateFormatted = convertDate(row.getCell(3).value);
 			const dobFormatted = convertDate(row.getCell(8).value);
+			const formatedoor_no = convertString(row.getCell(9).value);
 			const city_id = await getOrInsert(db.city, "name", row.getCell(12).value);
 			const state_id = await getOrInsert(
 				db.state,
@@ -73,7 +74,7 @@ exports.importData = asyncHandler(async (req, res) => {
 				last_name: row.getCell(6).value,
 				father_name: row.getCell(7).value,
 				dob: dobFormatted,
-				door_no: row.getCell(9).value,
+				door_no: formatedoor_no,
 				residence_address: row.getCell(10).value,
 				area: row.getCell(11).value,
 				city_id,

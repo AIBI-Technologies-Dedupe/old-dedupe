@@ -9,7 +9,7 @@ import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useSendLogoutMutation } from "../../features/auth/authApiSlice";
 import { useSelector } from "react-redux";
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-	const role = useSelector((state) => state.auth.user.role);
+	const role = useSelector((state) => state.auth.user.role || null);
 	const navLinks = getNavLinks(role);
 	const [sendLogout, { isLoading, isSuccess, isError, error }] =
 		useSendLogoutMutation();

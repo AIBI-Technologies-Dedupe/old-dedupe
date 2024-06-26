@@ -8,5 +8,18 @@ exports.getOrInsert = async (model, column, value) => {
 };
 
 exports.convertDate = (dateString) => {
-	return new Date(dateString).toISOString().slice(0, 10);
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+        return null;
+    }
+    return date.toISOString().slice(0, 10);
+};
+
+
+exports.convertString = (input) => {
+    if (input != null) {
+        return String(input).trim();
+    }
+    return input; 
 };

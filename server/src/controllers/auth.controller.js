@@ -21,7 +21,7 @@ exports.createUser = asyncHandler(async (req, res) => {
 		name,
 		phoneNo,
 	});
-	if (error) return handleError(res, error.details[0].message, 400);
+	if (error) return res.status(400).json({ error: error.details[0].message });
 
 	const existingUser = await db.user.findOne({ where: { email } });
 	if (existingUser) {

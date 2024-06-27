@@ -9,6 +9,8 @@ server/src/uploads/*
 # Do not ignore the .gitkeep file
 !server/src/uploads/.gitkeep
 
+# Ignore the log folder inside the configs directory
+server/src/configs/log/
 
 .env
 .DS_Store

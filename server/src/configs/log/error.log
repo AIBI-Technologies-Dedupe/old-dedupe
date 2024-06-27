@@ -51,3 +51,75 @@
     at async processRow (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:29:21)
     at async Promise.all (index 259)
     at async /Users/debarundeb/Social Network/Development/dedupe/server/src/controllers/data.controller.js:20:18
+2024-06-27T07:34:50.121Z error: Error
+    at Query.run (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/mysql/query.js:52:25)
+    at /Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async MySQLQueryInterface.insert (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:2490:35)
+    at async product.create (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1362:12)
+    at async product.findOrCreate (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1422:25)
+    at async getOrInsert (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:5:28)
+    at async processRow (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:31:21)
+    at async exports.processWorksheet (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:106:20)
+    at async /Users/debarundeb/Social Network/Development/dedupe/server/src/controllers/data.controller.js:18:18
+2024-06-27T07:34:50.128Z error: Error
+    at Query.run (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/mysql/query.js:52:25)
+    at /Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async MySQLQueryInterface.insert (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:2490:35)
+    at async product.create (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1362:12)
+    at async product.findOrCreate (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1422:25)
+    at async getOrInsert (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:5:28)
+    at async processRow (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:31:21)
+    at async exports.processWorksheet (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:106:20)
+    at async /Users/debarundeb/Social Network/Development/dedupe/server/src/controllers/data.controller.js:18:18
+2024-06-27T07:37:03.156Z error: Error
+    at Query.run (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/mysql/query.js:52:25)
+    at /Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async MySQLQueryInterface.insert (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:2490:35)
+    at async product.create (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1362:12)
+    at async product.findOrCreate (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1422:25)
+    at async getOrInsert (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:5:28)
+    at async processRow (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:31:21)
+    at async exports.processWorksheet (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:106:20)
+    at async /Users/debarundeb/Social Network/Development/dedupe/server/src/controllers/data.controller.js:18:18
+2024-06-27T07:37:03.159Z error: Error
+    at Query.run (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/mysql/query.js:52:25)
+    at /Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async MySQLQueryInterface.insert (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:2490:35)
+    at async product.create (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1362:12)
+    at async product.findOrCreate (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1422:25)
+    at async getOrInsert (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:5:28)
+    at async processRow (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:31:21)
+    at async exports.processWorksheet (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:106:20)
+    at async /Users/debarundeb/Social Network/Development/dedupe/server/src/controllers/data.controller.js:18:18
+2024-06-27T07:40:45.749Z error: Error
+    at Query.run (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/mysql/query.js:52:25)
+    at /Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async MySQLQueryInterface.insert (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:2490:35)
+    at async product.create (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1362:12)
+    at async product.findOrCreate (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1422:25)
+    at async getOrInsert (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:5:28)
+    at async processRow (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:31:21)
+    at async exports.processWorksheet (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:106:20)
+    at async /Users/debarundeb/Social Network/Development/dedupe/server/src/controllers/data.controller.js:18:18
+2024-06-27T07:40:45.750Z error: Error
+    at Query.run (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/mysql/query.js:52:25)
+    at /Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async MySQLQueryInterface.insert (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:2490:35)
+    at async product.create (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1362:12)
+    at async product.findOrCreate (/Users/debarundeb/Social Network/Development/dedupe/server/node_modules/sequelize/lib/model.js:1422:25)
+    at async getOrInsert (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:5:28)
+    at async processRow (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:31:21)
+    at async exports.processWorksheet (/Users/debarundeb/Social Network/Development/dedupe/server/src/utils/dataUtils.js:106:20)
+    at async /Users/debarundeb/Social Network/Development/dedupe/server/src/controllers/data.controller.js:18:18

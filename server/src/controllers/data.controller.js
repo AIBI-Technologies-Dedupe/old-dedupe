@@ -2,7 +2,7 @@ const db = require("../DB/index");
 const ExcelJS = require("exceljs");
 const asyncHandler = require("express-async-handler");
 const { processWorksheet } = require("../utils/dataUtils");
-const { logger }= require("../configs/loggerConfig");  // Import the logger
+const {logger} = require("../configs/loggerConfig");  // Import the logger
 
 exports.importData = asyncHandler(async (req, res, next) => {
   if (!req.file) {

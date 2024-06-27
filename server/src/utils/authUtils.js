@@ -18,7 +18,7 @@ exports.updateUserSchema = joi.object({
   newName: joi.string().optional(),
   id: joi.number().integer().optional(),
   newEmail: joi.string().email().optional(),
-  newPassword: joi.string().min(6).optional(),
+  newPassword: joi.string().optional(),
   newPhoneno: joi.string().optional(),
 });
 

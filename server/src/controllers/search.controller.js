@@ -1,6 +1,7 @@
 const db = require("../DB/index");
 const { Op } = require("sequelize");
 const asyncHandler = require("express-async-handler");
+const logger = require("../configs/loggerConfig");  // Import the logger
 
 exports.searchRecords = asyncHandler(async (req, res) => {
 	let fieldNames = req.body.field_name;
@@ -13,91 +14,91 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 		fieldNames = fieldNames ? [fieldNames] : [];
 	}
 
-	if (!Array.isArray(searchTerms)) {
-		searchTerms = searchTerms ? [searchTerms] : [];
-	}
+    if (!Array.isArray(searchTerms)) {
+        searchTerms = searchTerms ? [searchTerms] : [];
+    }
 
-	// List of valid fields
-	const validFields = [
-		"first_name",
-		"middle_name",
-		"last_name",
-		"father_name",
-		"dob",
-		"login_date",
-		"residence_address",
-		"residence_area",
-		"company_name",
-		"office_address",
-		"compnay_area_name",
-		"email_id",
-		"aadhar_number",
-		"pan_number",
-		"passport_number",
-		"election_id_number",
-		"vehicle_number",
-		"dl_number",
-		"remarks",
-		"client_name",
-		"product_name",
-		"residence_city_name",
-		"residence_state_name",
-		"residence_pincode",
-		"company_city_name",
-		"company_pincode",
-		"company_state_name",
-		"status_name",
-	];
+    // List of valid fields
+    const validFields = [
+        "first_name",
+        "middle_name",
+        "last_name",
+        "father_name",
+        "dob",
+        "login_date",
+        "residence_address",
+        "residence_area",
+        "company_name",
+        "office_address",
+        "compnay_area_name",
+        "email_id",
+        "aadhar_number",
+        "pan_number",
+        "passport_number",
+        "election_id_number",
+        "vehicle_number",
+        "dl_number",
+        "remarks",
+        "client_name",
+        "product_name",
+        "residence_city_name",
+        "residence_state_name",
+        "residence_pincode",
+        "company_city_name",
+        "company_pincode",
+        "company_state_name",
+        "status_name",
+    ];
 
-	const conditions = [];
+    const conditions = [];
 
-	// Build conditions for each valid field
-	for (let i = 0; i < fieldNames.length; i++) {
-		const fieldName = fieldNames[i];
-		const searchTerm = searchTerms[i];
+    // Build conditions for each valid field
+    for (let i = 0; i < fieldNames.length; i++) {
+        const fieldName = fieldNames[i];
+        const searchTerm = searchTerms[i];
 
-		if (validFields.includes(fieldName) && searchTerm) {
-			const searchValue = `%${searchTerm.toUpperCase()}%`;
-			switch (fieldName) {
-				case "client_name":
-					conditions.push({ "$client.name$": { [Op.like]: searchValue } });
-					break;
-				case "product_name":
-					conditions.push({ "$product.name$": { [Op.like]: searchValue } });
-					break;
-				case "residence_city_name":
-					conditions.push({ "$city.name$": { [Op.like]: searchValue } });
-					break;
-				case "residence_state_name":
-					conditions.push({ "$state.name$": { [Op.like]: searchValue } });
-					break;
-				case "residence_pincode":
-					conditions.push({ "$pincode.code$": { [Op.like]: searchValue } });
-					break;
-				case "company_city_name":
-					conditions.push({ "$city1.name$": { [Op.like]: searchValue } });
-					break;
-				case "company_pincode":
-					conditions.push({ "$pincode1.code$": { [Op.like]: searchValue } });
-					break;
-				case "company_state_name":
-					conditions.push({ "$state1.name$": { [Op.like]: searchValue } });
-					break;
-				case "status_name":
-					conditions.push({ "$status.name$": { [Op.like]: searchValue } });
-					break;
-				default:
-					conditions.push({ [fieldName]: { [Op.like]: searchValue } });
-					break;
-			}
-		}
-	}
+        if (validFields.includes(fieldName) && searchTerm) {
+            const searchValue = `%${searchTerm.toUpperCase()}%`;
+            switch (fieldName) {
+                case "client_name":
+                    conditions.push({ "$client.name$": { [Op.like]: searchValue } });
+                    break;
+                case "product_name":
+                    conditions.push({ "$product.name$": { [Op.like]: searchValue } });
+                    break;
+                case "residence_city_name":
+                    conditions.push({ "$city.name$": { [Op.like]: searchValue } });
+                    break;
+                case "residence_state_name":
+                    conditions.push({ "$state.name$": { [Op.like]: searchValue } });
+                    break;
+                case "residence_pincode":
+                    conditions.push({ "$pincode.code$": { [Op.like]: searchValue } });
+                    break;
+                case "company_city_name":
+                    conditions.push({ "$city1.name$": { [Op.like]: searchValue } });
+                    break;
+                case "company_pincode":
+                    conditions.push({ "$pincode1.code$": { [Op.like]: searchValue } });
+                    break;
+                case "company_state_name":
+                    conditions.push({ "$state1.name$": { [Op.like]: searchValue } });
+                    break;
+                case "status_name":
+                    conditions.push({ "$status.name$": { [Op.like]: searchValue } });
+                    break;
+                default:
+                    conditions.push({ [fieldName]: { [Op.like]: searchValue } });
+                    break;
+            }
+        }
+    }
 
-	if (conditions.length === 0) {
-		return res.status(400).json({
-			error: "At least one valid field and search term must be provided",
-		});
-	}
+    if (conditions.length === 0) {
+        return res.status(400).json({
+            error: "At least one valid field and search term must be provided",
+        });
+    }
 
 	try {
 		// Query the database with pagination
@@ -160,31 +161,31 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 			remarks: record.remarks,
 		}));
 
-		// Increment search count in search history
-		const user_id = req.user.id;
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
+        // Increment search count in search history
+        const user_id = req.user.id;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-		// Find existing search history entry for today
-		let searchHistory = await db.search_history.findOne({
-			where: {
-				user_id: user_id,
-				searchdate: today,
-			},
-		});
+        // Find existing search history entry for today
+        let searchHistory = await db.search_history.findOne({
+            where: {
+                user_id: user_id,
+                searchdate: today,
+            },
+        });
 
-		if (searchHistory) {
-			// If found, increment searchCount
-			searchHistory.searchCount += 1;
-			await searchHistory.save();
-		} else {
-			// If not found, create new search history entry
-			searchHistory = await db.search_history.create({
-				user_id,
-				searchdate: today,
-				searchCount: 1,
-			});
-		}
+        if (searchHistory) {
+            // If found, increment searchCount
+            searchHistory.searchCount += 1;
+            await searchHistory.save();
+        } else {
+            // If not found, create new search history entry
+            searchHistory = await db.search_history.create({
+                user_id,
+                searchdate: today,
+                searchCount: 1,
+            });
+        }
 
 		// Return records with success message
 		res.json({

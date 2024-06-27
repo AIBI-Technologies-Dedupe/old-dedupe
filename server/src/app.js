@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const cookieparser = require("cookie-parser");
+const { logger } = require("./configs/loggerConfig");
 
 const app = express();
 
@@ -20,5 +21,23 @@ app.use("/auth", authRoutes);
 app.use("/data", dataRoutes);
 app.use("/search", searchRoutes);
 app.use("/history", historyRoutes);
+
+app.use((err, req, res, next) => {
+    logger.error('Express Error:', err);
+    res.status(500).send('Something went wrong!');
+  });
+  
+  // Uncaught Exception Handler
+  process.on('uncaughtException', (err) => {
+    logger.error('Uncaught Exception:', err);
+    process.exit(1); // Optionally, exit the process if necessary
+  });
+  
+  // Unhandled Rejection Handler
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Optionally, you can exit the process if necessary
+    // process.exit(1);
+  });
 
 module.exports = app;

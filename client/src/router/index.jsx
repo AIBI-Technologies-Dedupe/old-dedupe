@@ -10,7 +10,8 @@ import ViewUsers from "../pages/users/view";
 import AddCases from "../pages/cases/add";
 import ViewCases from "../pages/cases/view";
 
-import ViewHistory from "../pages/history";
+import UserHistory from "../pages/history/users";
+import SearchHistory from "../pages/history/search";
 
 import AuthGuard from "./AuthGuard"; // Import the AuthGuard component
 import AdminGuard from "./AdminGuard";
@@ -37,8 +38,12 @@ const router = createBrowserRouter([
 				element: <AuthGuard element={AddCases} />,
 			},
 			{
-				path: "history/view",
-				element: <AdminGuard element={ViewHistory} />,
+				path: "history/users",
+				element: <AdminGuard element={UserHistory} />,
+			},
+			{
+				path: "history/search",
+				element: <AdminGuard element={SearchHistory} />,
 			},
 		],
 	},

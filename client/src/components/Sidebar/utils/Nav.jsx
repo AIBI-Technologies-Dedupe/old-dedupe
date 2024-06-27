@@ -26,8 +26,11 @@ export const getNavLinks = (userRole) => {
 		{
 			name: "Logs",
 			Icon: <FaRegBookmark />,
-			to: "/history/view",
-			subpages: null,
+			to: null,
+			subpages: [
+				{ name: "Search Audit", to: "/history/search" },
+				{ name: "Login Audit", to: "/history/users" },
+			],
 		},
 		{
 			name: "Search",

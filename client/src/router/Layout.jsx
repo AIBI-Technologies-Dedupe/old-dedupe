@@ -16,9 +16,12 @@ const Layout = () => {
 	return (
 		<div className="flex flex-col justify-between min-h-screen">
 			<Header toggleSidebar={toggleSidebar} />
-			<div className="flex flex-col md:flex-row bg-gray-50 flex-1">
-				<Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-				<div className="w-full p-6">
+			<div className="flex flex-1 bg-gray-50 md:flex-row">
+				<div className="flex flex-col">
+					<Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+				</div>
+
+				<div className="w-full p-6 overflow-x-auto">
 					<Outlet />
 				</div>
 			</div>

@@ -5,8 +5,10 @@ const asyncHandler = require("express-async-handler");
 exports.searchRecords = asyncHandler(async (req, res) => {
 	let fieldNames = req.body.field_name;
 	let searchTerms = req.body.search_term;
-	console.log(fieldNames);
-	console.log(searchTerms);
+	const limit = parseInt(req.body.limit) || 100; // Number of records per page
+	const page = parseInt(req.body.page) || 1; // Current page number
+	const offset = (page - 1) * limit; // Offset for pagination
+
 	if (!Array.isArray(fieldNames)) {
 		fieldNames = fieldNames ? [fieldNames] : [];
 	}
@@ -98,8 +100,8 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 	}
 
 	try {
-		// Query the database
-		const records = await db.raw_data.findAll({
+		// Query the database with pagination
+		const records = await db.raw_data.findAndCountAll({
 			where: { [Op.and]: conditions },
 			include: [
 				{ model: db.client, as: "client", attributes: ["id", "name"] },
@@ -112,14 +114,16 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 				{ model: db.state1, as: "state1", attributes: ["id", "name"] },
 				{ model: db.status, as: "status", attributes: ["id", "name"] },
 			],
+			limit: limit,
+			offset: offset,
 		});
 
-		if (records.length === 0) {
+		if (records.count === 0) {
 			return res.status(404).json({ error: "No records found" });
 		}
 
 		// Transform response to include readable names
-		const response = records.map((record) => ({
+		const response = records.rows.map((record) => ({
 			id: record.id,
 			client_name: record.client ? record.client.name : null,
 			product_name: record.product ? record.product.name : null,
@@ -183,7 +187,12 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 		}
 
 		// Return records with success message
-		res.json({ message: "Records found", data: response });
+		res.json({
+			message: "Records found",
+			data: response,
+			currentPage: page,
+			totalPages: Math.ceil(records.count / limit),
+		});
 	} catch (error) {
 		console.error("Error fetching records:", error);
 		res.status(500).json({ error: "Internal Server Error" });

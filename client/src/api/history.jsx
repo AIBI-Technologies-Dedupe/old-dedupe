@@ -14,6 +14,12 @@ export const historyApi = apiSlice.injectEndpoints({
 				method: "GET",
 			}),
 		}),
+		getUploadHistory: builder.query({
+			query: () => ({
+				url: "/history/upload",
+				method: "GET",
+			}),
+		}),
 	}),
 });
 
@@ -22,4 +28,6 @@ export const {
 	useLazyGetSearchHistoryQuery,
 	useLazyGetUserHistoryQuery,
 	useGetSearchHistoryQuery,
+	useLazyGetUploadHistoryQuery,
+	useGetUploadHistoryQuery,
 } = historyApi;

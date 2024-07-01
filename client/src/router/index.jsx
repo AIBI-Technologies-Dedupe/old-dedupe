@@ -12,7 +12,7 @@ import ViewCases from "../pages/cases/view";
 
 import UserHistory from "../pages/history/users";
 import SearchHistory from "../pages/history/search";
-
+import UploadHistory from "../pages/history/upload";
 import AuthGuard from "./AuthGuard"; // Import the AuthGuard component
 import AdminGuard from "./AdminGuard";
 const router = createBrowserRouter([
@@ -44,6 +44,10 @@ const router = createBrowserRouter([
 			{
 				path: "history/search",
 				element: <AdminGuard element={SearchHistory} />,
+			},
+			{
+				path: "/history/upload",
+				element: <AdminGuard element={UploadHistory} />,
 			},
 		],
 	},

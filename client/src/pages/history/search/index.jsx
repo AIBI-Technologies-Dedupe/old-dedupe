@@ -12,9 +12,6 @@ const Index = () => {
 		return <div>Loading...</div>;
 	}
 
-	if (error) {
-		return <div>Error loading users data.</div>;
-	}
 	let users = [];
 	if (data) {
 		users = data.data;

@@ -12,5 +12,6 @@ module.exports = (db) => {
     db.raw_data.belongsTo(db.status, { foreignKey: 'status_id' });
     db.user_history.belongsTo(db.user, { foreignKey: 'user_id' });
     db.search_history.belongsTo(db.user, { foreignKey: 'user_id' });
-  };
+    db.upload_history.belongsTo(db.user, { foreignKey: 'user_id' });
+};
   

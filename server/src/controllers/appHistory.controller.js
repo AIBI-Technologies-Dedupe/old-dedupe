@@ -1,6 +1,6 @@
 const db = require("../DB/index");
 const asyncHandler = require("express-async-handler");
-const logger = require("../configs/loggerConfig");  // Make sure to import your logger
+const logger = require("../configs/loggerConfig"); 
 
 exports.getUserHistory = asyncHandler(async (req, res, next) => {
   try {
@@ -28,9 +28,14 @@ exports.getUserHistory = asyncHandler(async (req, res, next) => {
       loginCount: history.loginCount,
     }));
 
-    res.status(200).json({ message: "Login history retrieved successfully", data: formattedHistories });
+    res
+      .status(200)
+      .json({
+        message: "Login history retrieved successfully",
+        data: formattedHistories,
+      });
   } catch (error) {
-    logger.error('Error retrieving user history:', error);
+    logger.error("Error retrieving user history:", error);
     next(error);
   }
 });
@@ -61,12 +66,50 @@ exports.getSearchHistory = asyncHandler(async (req, res, next) => {
       searchCount: history.searchCount,
     }));
 
-  	res.status(200).json({
-		message: "Search history retrieved successfully",
-		data: formattedHistories,
-	});
+    res.status(200).json({
+      message: "Search history retrieved successfully",
+      data: formattedHistories,
+    });
   } catch (error) {
-    logger.error('Error retrieving search history:', error);
+    logger.error("Error retrieving search history:", error);
+    next(error);
+  }
+});
+
+exports.getUploadHistory = asyncHandler(async (req, res, next) => {
+  try {
+    const uploadHistory = await db.upload_history.findAll({
+      include: [
+        {
+          model: db.user, // Make sure you have defined the association between upload_histories and users
+          attributes: ["id", "email"], // Add other user attributes if needed
+        },
+      ],
+      order: [["uploadDate", "DESC"]],
+    });
+
+    if (!uploadHistory || uploadHistory.length === 0) {
+      return res.status(404).json({ error: "No upload history found" });
+    }
+
+    const formattedHistories = uploadHistory.map((history) => ({
+      uploadId: history.id,
+      userId: history.user.id,
+      username: history.user.username,
+      email: history.user.email,
+      uploadDate: new Date(history.uploadDate).toLocaleDateString(),
+      successfulUploadCount: history.successfulUploadCount,
+      failUploadCount: history.failUploadCount,
+    }));
+
+    res
+      .status(200)
+      .json({
+        message: "Upload history retrieved successfully",
+        data: formattedHistories,
+      });
+  } catch (error) {
+    console.error("Error retrieving upload history:", error);
     next(error);
   }
 });

@@ -35,6 +35,7 @@ db.status = require("./models/status.model")(sequelize);
 db.raw_data = require("./models/raw_data.model")(sequelize);
 db.user_history = require("./models/user_history.model")(sequelize);
 db.search_history = require("./models/search_history.model")(sequelize);
+db.upload_history = require("./models/upload_history.model")(sequelize);
 
 require("./associations")(db);
 

@@ -82,7 +82,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 		} catch (err) {
 			logger.error("Database query error:", err);
 			return res.status(500).json({ error: "Database query error" });
-		}
+		} 
 
 		if (userHistory) {
 			userHistory.loginCount += 1;

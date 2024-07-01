@@ -15,8 +15,19 @@ export const usersApi = apiSlice.injectEndpoints({
 				method: "GET",
 			}),
 		}),
+		exportUsersToExcel: builder.mutation({
+			query: () => ({
+				url: "admin/export-users",
+				method: "GET",
+				responseHandler: (response) => response.blob(), // Important for handling binary data
+			}),
+		}),
 	}),
 });
 
-export const { useSignupMutation, useGetUsersQuery, useCountUsersQuery } =
-	usersApi;
+export const {
+	useSignupMutation,
+	useGetUsersQuery,
+	useCountUsersQuery,
+	useExportUsersToExcelMutation,
+} = usersApi;

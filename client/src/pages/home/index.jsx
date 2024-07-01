@@ -2,8 +2,11 @@ import React from "react";
 import { days } from "../../utils/days";
 import InfoCard from "../../components/Info";
 import { FaBriefcase, FaUserCog } from "react-icons/fa";
-
+import { useExportUsersToExcelMutation } from "../../api/users";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const Home = () => {
 	const date = new Date();
 	const offset =
@@ -12,6 +15,25 @@ const Home = () => {
 	let indiaTime = new Date(
 		normalized.toLocaleString("en-US", { timeZone: "Asia/Calcutta" })
 	);
+
+	const [exportUsersToExcel, { isLoading }] = useExportUsersToExcelMutation();
+
+	const handleExport = async () => {
+		try {
+			const response = await exportUsersToExcel().unwrap();
+			const url = window.URL.createObjectURL(new Blob([response]));
+			const link = document.createElement("a");
+			link.href = url;
+			link.setAttribute("download", "users.xlsx");
+			document.body.appendChild(link);
+			link.click();
+			link.remove();
+			toast.success("Export successful!");
+		} catch (error) {
+			console.error("Failed to export users to Excel:", error);
+			toast.error("Failed to export.");
+		}
+	};
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -38,6 +60,14 @@ const Home = () => {
 				<Link to="/users/add">
 					<InfoCard color="green" title="Add Users" icon={<FaUserCog />} />
 				</Link>
+			</div>
+			<div>
+				<button
+					onClick={handleExport}
+					disabled={isLoading}
+					className="font-bold underline hover:text-blue-500">
+					{isLoading ? "Exporting..." : "Export Users to Excel"}
+				</button>
 			</div>
 		</div>
 	);

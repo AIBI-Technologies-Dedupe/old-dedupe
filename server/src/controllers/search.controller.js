@@ -164,7 +164,7 @@ exports.searchRecords = asyncHandler(async (req, res) => {
     // Increment search count in search history
     const user_id = req.user.id;
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
 
     // Find existing search history entry for today
     let searchHistory = await db.search_history.findOne({

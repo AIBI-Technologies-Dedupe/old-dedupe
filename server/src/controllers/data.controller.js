@@ -10,16 +10,15 @@ exports.importData = asyncHandler(async (req, res, next) => {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-  const filePath = req.file.path;
-  const fileName = req.file.originalname;
+  const fileBuffer = req.file.buffer; // Access the in-memory file buffer
   const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile(filePath);
+  await workbook.xlsx.load(fileBuffer); // Load the workbook from the buffer
   const worksheet = workbook.getWorksheet(1);
 
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  console.log(today)
+  console.log(today);
 
   try {
     const data = await processWorksheet(worksheet);

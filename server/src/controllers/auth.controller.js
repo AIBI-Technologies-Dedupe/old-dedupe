@@ -42,9 +42,11 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 			action: "create",
 		});
 
-		res.status(201).json({ message: "User created successfully", user: newUser });
+		res
+			.status(201)
+			.json({ message: "User created successfully", user: newUser });
 	} catch (error) {
-		logger.error('Create User Error:', error);
+		logger.error("Create User Error:", error);
 		next(error);
 	}
 });
@@ -82,7 +84,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 		} catch (err) {
 			logger.error("Database query error:", err);
 			return res.status(500).json({ error: "Database query error" });
-		} 
+		}
 
 		if (userHistory) {
 			userHistory.loginCount += 1;
@@ -98,7 +100,6 @@ exports.login = asyncHandler(async (req, res, next) => {
 		const accessToken = jwt.sign(
 			{ UserInfo: { id: user.id, email: user.email, role: user.role } },
 			process.env.ACCESS_TOKEN_SECRET,
-			{ expiresIn: "3h" }
 		);
 
 		const refreshToken = jwt.sign(
@@ -108,7 +109,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 		);
 
 		res.cookie("jwt", refreshToken, {
-			httpOnly: true,
+			httpOnly: false,
 			secure: true,
 			maxAge: 3 * 60 * 60 * 1000,
 		});
@@ -120,7 +121,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 		res.status(200).json({ accessToken, user: userDetails });
 	} catch (error) {
-		logger.error('Login Error:', error);
+		logger.error("Login Error:", error);
 		next(error);
 	}
 });
@@ -130,13 +131,14 @@ exports.getCount = asyncHandler(async (req, res, next) => {
 		const { count } = await db.user.findAndCountAll();
 		res.status(200).json(count);
 	} catch (error) {
-		logger.error('Get Count Error:', error);
+		logger.error("Get Count Error:", error);
 		next(error);
 	}
 });
 
 exports.refresh = asyncHandler(async (req, res, next) => {
 	try {
+		console.log(req.cookies);
 		const { jwt: refreshToken } = req.cookies;
 		if (!refreshToken) {
 			return res.status(401).json({ error: "Unauthorized" });
@@ -154,12 +156,17 @@ exports.refresh = asyncHandler(async (req, res, next) => {
 			{ expiresIn: "3h" }
 		);
 
-		res.status(200).json({ message: "Token refreshed successfully", accessToken });
+		res.status(200).json({ accessToken });
 	} catch (error) {
-		if (error.name === "TokenExpiredError" || error.name === "JsonWebTokenError") {
-			return res.status(403).json({ error: "Invalid token, please login again." });
+		if (
+			error.name === "TokenExpiredError" ||
+			error.name === "JsonWebTokenError"
+		) {
+			return res
+				.status(403)
+				.json({ error: "Invalid token, please login again." });
 		}
-		logger.error('Refresh Token Error:', error);
+		logger.error("Refresh Token Error:", error);
 		next(error);
 	}
 });
@@ -169,7 +176,7 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
 		const users = await db.user.findAll();
 		res.status(200).json({ message: "Users retrieved successfully", users });
 	} catch (error) {
-		logger.error('Get All Users Error:', error);
+		logger.error("Get All Users Error:", error);
 		next(error);
 	}
 });
@@ -206,7 +213,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 		await user.save();
 		res.status(200).json({ message: "User updated successfully", user });
 	} catch (error) {
-		logger.error('Update User Error:', error);
+		logger.error("Update User Error:", error);
 		next(error);
 	}
 });
@@ -233,7 +240,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 		await user.save();
 		res.status(200).json({ message: "User deleted successfully" });
 	} catch (error) {
-		logger.error('Delete User Error:', error);
+		logger.error("Delete User Error:", error);
 		next(error);
 	}
 });
@@ -260,7 +267,7 @@ exports.disableUser = asyncHandler(async (req, res, next) => {
 		await user.save();
 		res.status(200).json({ message: "User disabled successfully" });
 	} catch (error) {
-		logger.error('Disable User Error:', error);
+		logger.error("Disable User Error:", error);
 		next(error);
 	}
 });

@@ -18,8 +18,6 @@ exports.importData = asyncHandler(async (req, res, next) => {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  console.log(today);
-
   try {
     const data = await processWorksheet(worksheet);
 

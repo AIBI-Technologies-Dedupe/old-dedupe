@@ -28,10 +28,10 @@ const Index = () => {
 							Name
 						</th>
 						<th scope="col" className="px-6 py-3">
-							Search Count
+							Upload Count
 						</th>
 						<th scope="col" className="px-6 py-3">
-							Search Date
+							Upload Date
 						</th>
 					</tr>
 				</thead>
@@ -39,9 +39,9 @@ const Index = () => {
 					{users.map((user, idx) => {
 						return (
 							<tr key={idx} className="bg-white">
-								<td className="px-6 py-4">{user.name}</td>
-								<td className="px-6 py-4">{user.searchCount}</td>
-								<td className="px-6 py-4">{user.searchDate}</td>
+								<td className="px-6 py-4">{user.email}</td>
+								<td className="px-6 py-4">{user.successfulUploadCount}</td>
+								<td className="px-6 py-4">{user.uploadDate}</td>
 							</tr>
 						);
 					})}

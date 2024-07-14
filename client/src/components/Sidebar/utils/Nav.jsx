@@ -30,6 +30,7 @@ export const getNavLinks = (userRole) => {
 			subpages: [
 				{ name: "Search Audit", to: "/history/search" },
 				{ name: "Login Audit", to: "/history/users" },
+				{ name: "Upload Audit", to: "/history/upload" },
 			],
 		},
 		{

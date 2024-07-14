@@ -47,10 +47,13 @@ const Home = () => {
 				</div>
 			</div>
 			<div className="grid grid-cols-3 gap-4">
-				<Link to="/">
+				<Link to="/history/search">
 					<InfoCard color="" title="Search Audit" icon={<FaBriefcase />} />
 				</Link>
-				<Link to="/cases/add">
+				<Link to="/history/upload">
+					<InfoCard color="" title="Upload Audit" icon={<FaBriefcase />} />
+				</Link>
+				<Link to="/history/users">
 					<InfoCard color="blue" title="User Audit" icon={<FaBriefcase />} />
 				</Link>
 				<Link to="/cases/add">

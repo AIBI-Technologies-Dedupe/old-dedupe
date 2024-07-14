@@ -73,9 +73,6 @@ const login = () => {
 									setEmail(e.target.value);
 								}}
 							/>
-							<p className="text-xs text-gray-600">
-								we will never share your email with anyone
-							</p>
 						</div>
 						<div className="flex flex-col gap-1">
 							<label>Password</label>
@@ -97,7 +94,6 @@ const login = () => {
 							className={`text-blue-500 ${hidden ? "" : "hidden"}`}
 							onClick={setHiddenPassword}
 						/>
-						<p className="text-gray-600">Forgot Password?</p>
 					</div>
 					{isLoading ? (
 						<button
@@ -112,13 +108,6 @@ const login = () => {
 							Login
 						</button>
 					)}
-
-					<div className="flex flex-col gap-2">
-						<p>Dont have an Account?</p>
-						<button className=" text-gray-600 border border-gray-300 p-2 w-[100%]">
-							Reach us
-						</button>
-					</div>
 				</div>
 			</div>
 		</div>

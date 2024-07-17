@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 //base query that will attach the auth header to every request
 const baseQuery = fetchBaseQuery({
-	baseUrl: "http://localhost:3000",
+	baseUrl: "https://dedupe-be-ghic7y4swa-el.a.run.app",
 	//   credentials: "include",                    //for httponly cookies
 	prepareHeaders: (headers, { getState }) => {
 		const token = getState().auth.token;

@@ -8,8 +8,10 @@ import { getNavLinks } from "./utils/Nav";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useSendLogoutMutation } from "../../features/auth/authApiSlice";
 import { useSelector } from "react-redux";
+
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-	const role = useSelector((state) => state.auth.user.role || null);
+	const user = useSelector(selectCurrentUser);
+	const role = user?.role || null;
 	const navLinks = getNavLinks(role);
 	const [sendLogout, { isLoading, isSuccess, isError, error }] =
 		useSendLogoutMutation();
@@ -19,7 +21,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 	const toggleSubMenu = (name) => {
 		setOpenSubMenu(openSubMenu === name ? null : name);
 	};
-	const user = useSelector(selectCurrentUser);
 
 	const isActive = (to) => {
 		return location.pathname === to;
@@ -39,10 +40,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 	};
 
 	useEffect(() => {
-		if (isSuccess) {
+		if (isSuccess || !user?.id || !user?.name || !user?.role) {
 			navigate("/login");
 		}
-	}, [isSuccess, navigate]);
+	}, [isSuccess, user, navigate]);
 
 	return (
 		<div
@@ -53,7 +54,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 				<div className="flex items-center gap-4">
 					<img src={Profile} className="w-[60px] h-[60px] rounded-full" />
 					<div className="flex flex-col">
-						<div className="text-lg text-white">{user.name}</div>
+						<div className="text-lg text-white">{user?.name || "User"}</div>{" "}
+						{/* Safely access user name */}
 						<div className="flex items-center gap-1 text-green-500">
 							<FaCircle />
 							Online

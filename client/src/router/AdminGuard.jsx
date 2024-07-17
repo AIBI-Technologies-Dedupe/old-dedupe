@@ -4,9 +4,10 @@ import { Navigate } from "react-router-dom";
 
 const AdminGuard = ({ element: Component }) => {
 	const token = useSelector((state) => state.auth.token);
-	const role = useSelector((state) => state.auth.user.role);
+	const role = useSelector((state) => state.auth.user?.role); // Use optional chaining
 
-	if (!token) {
+	if (!token || role === null) {
+		// Navigate to login if token is not present or role is null
 		return <Navigate to="/login" />;
 	}
 

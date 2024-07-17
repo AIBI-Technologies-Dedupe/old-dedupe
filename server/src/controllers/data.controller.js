@@ -6,44 +6,34 @@ const { logger } = require("../configs/loggerConfig");
 const { handleUploadHistory } = require("../utils/historyUtils")
 
 exports.importData = asyncHandler(async (req, res, next) => {
-	if (!req.file) {
-		return res.status(400).json({ error: "No file uploaded" });
-	}
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
 
-	const workbook = new ExcelJS.Workbook();
-	const today = new Date();
-	today.setUTCHours(0, 0, 0, 0);
+  const fileBuffer = req.file.buffer; // Access the in-memory file buffer
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(fileBuffer); // Load the workbook from the buffer
+  const worksheet = workbook.getWorksheet(1);
 
-	try {
-		await workbook.xlsx.load(req.file.buffer); // Read directly from buffer
-		const worksheet = workbook.getWorksheet(1);
-		if (!worksheet) {
-			return res.status(400).json({ error: "Worksheet not found" });
-		}
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
 
-		const rows = [];
-		worksheet.eachRow({ includeEmpty: false }, (row) => {
-			rows.push(row.values); // Collect rows
-		});
+  try {
+    const data = await processWorksheet(worksheet);
 
-		// Define the batch size
-		const batchSize = 1000; // Adjust based on memory and performance needs
-		for (let i = 0; i < rows.length; i += batchSize) {
-			const batch = rows.slice(i, i + batchSize);
+    await db.sequelize.transaction(async (t) => {
+      for (const row of data) {
+        await db.raw_data.create(row, { transaction: t });
+      }
+    });
 
-			// Use bulk insert operation
-			await db.sequelize.transaction(async (t) => {
-				await db.raw_data.bulkCreate(batch, { transaction: t });
-			});
-		}
-
-		await handleUploadHistory(req.user.id, today, true);
-		res.status(200).json({ message: "Data imported successfully." });
-	} catch (error) {
-		logger.error("Error importing data:", error);
-		await handleUploadHistory(req.user.id, today, false);
-		next(error);
-	}
+    await handleUploadHistory(req.user.id, today, true);
+    res.status(200).json({ message: "Data imported successfully." });
+  } catch (error) {
+    logger.error("Error importing data:", error);
+    await handleUploadHistory(req.user.id, today, false);
+    next(error); 
+  }
 });
 
 exports.getCount = asyncHandler(async (req, res, next) => {

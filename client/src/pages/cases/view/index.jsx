@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import InputParent from "../../../components/Input/Parent";
 import ActionButton from "../../../components/Button/ActionButton";
 import { useLazyGetSearchDataQuery } from "../../../api/search";
@@ -43,6 +44,7 @@ const ViewCases = () => {
 	const [triggerSearch, { isLoading }] = useLazyGetSearchDataQuery();
 	const [records, setRecords] = useState([]);
 	const [totalPages, setTotalPages] = useState(1);
+	const navigate = useNavigate();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -97,7 +99,29 @@ const ViewCases = () => {
 		handleSubmit(new Event("submit"));
 	};
 
+	const handleNavigate = (id) => {
+		navigate(`/case/${id}`);
+	};
+
+	const formatDate = (dateString) => {
+		const date = new Date(dateString);
+		const day = date.getDate().toString().padStart(2, "0");
+		const month = (date.getMonth() + 1).toString().padStart(2, "0");
+		const year = date.getFullYear();
+		return `${day}/${month}/${year}`;
+	};
+
 	if (isLoading) return <div>Loading...</div>;
+
+	const limitedFields = [
+		"client_name",
+		"product_name",
+		"first_name",
+		"status_name",
+		"dob",
+		"mobile1",
+		"pan_number",
+	];
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -144,26 +168,29 @@ const ViewCases = () => {
 						<table className="min-w-full text-sm text-left text-gray-500">
 							<thead className="bg-gray-50">
 								<tr>
-									{Object.keys(records[0]).map((key) => (
-										<th key={key} scope="col" className="px-6 py-3">
-											{key.replace(/_/g, " ")}
+									{limitedFields.map((field) => (
+										<th key={field} scope="col" className="px-6 py-3">
+											{field.replace(/_/g, " ")}
 										</th>
 									))}
+									<th scope="col" className="px-6 py-3">
+										Action
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{records.map((record, index) => (
 									<tr key={index} className="bg-white border-b">
-										{Object.entries(record).map(([key, value]) => (
+										{limitedFields.map((field) => (
 											<td
-												key={key}
+												key={field}
 												className={`px-6 py-4 ${
-													key === "remarks"
+													field === "remarks"
 														? "max-w-[80px] overflow-hidden text-ellipsis"
 														: ""
 												}`}
 												style={
-													key === "remarks"
+													field === "remarks"
 														? {
 																width: "80px",
 																height: "80px",
@@ -171,9 +198,18 @@ const ViewCases = () => {
 														  }
 														: {}
 												}>
-												{value}
+												{field === "dob"
+													? formatDate(record[field])
+													: record[field]}
 											</td>
 										))}
+										<td className="px-6 py-4">
+											<button
+												className="px-4 py-2 text-white bg-blue-500 rounded"
+												onClick={() => handleNavigate(record.id)}>
+												View Case
+											</button>
+										</td>
 									</tr>
 								))}
 							</tbody>

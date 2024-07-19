@@ -9,7 +9,17 @@ export const searchApi = apiSlice.injectEndpoints({
 				body: body,
 			}),
 		}),
+		getRecordById: builder.query({
+			query: (id) => ({
+				url: `/search/${id}`,
+				method: "GET",
+			}),
+		}),
 	}),
 });
 
-export const { useGetSearchDataQuery, useLazyGetSearchDataQuery } = searchApi;
+export const {
+	useGetSearchDataQuery,
+	useLazyGetSearchDataQuery,
+	useGetRecordByIdQuery,
+} = searchApi;

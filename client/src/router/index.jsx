@@ -10,6 +10,7 @@ import UpdateUser from "../pages/users/update"; // Added import for UpdateUser
 
 import AddCases from "../pages/cases/add";
 import ViewCases from "../pages/cases/view";
+import ViewCaseDetails from "../pages/cases/id";
 
 import UserHistory from "../pages/history/users";
 import SearchHistory from "../pages/history/search";
@@ -18,53 +19,57 @@ import AuthGuard from "./AuthGuard"; // Import the AuthGuard component
 import AdminGuard from "./AdminGuard";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Layout />,
-        children: [
-            { path: "/", element: <AdminGuard element={Home} /> },
-            {
-                path: "users/view",
-                element: <AdminGuard element={ViewUsers} />,
-            },
-            {
-                path: "users/add",
-                element: <AdminGuard element={AddUsers} />,
-            },
-            {
-                path: "cases/view",
-                element: <AuthGuard element={ViewCases} />,
-            },
-            {
-                path: "cases/add",
-                element: <AuthGuard element={AddCases} />,
-            },
-            {
-                path: "history/users",
-                element: <AdminGuard element={UserHistory} />,
-            },
-            {
-                path: "history/search",
-                element: <AdminGuard element={SearchHistory} />,
-            },
-            {
-                path: "/history/upload",
-                element: <AdminGuard element={UploadHistory} />,
-            },
-            {
-                path: "/edit-user/:id", // Route for editing user
-                element: <AdminGuard element={UpdateUser} />,
-            },
-        ],
-    },
-    {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "*",
-        element: <Login />, // This will redirect to login for any unmatched routes
-    },
+	{
+		path: "/",
+		element: <Layout />,
+		children: [
+			{ path: "/", element: <AdminGuard element={Home} /> },
+			{
+				path: "users/view",
+				element: <AdminGuard element={ViewUsers} />,
+			},
+			{
+				path: "users/add",
+				element: <AdminGuard element={AddUsers} />,
+			},
+			{
+				path: "cases/view",
+				element: <AuthGuard element={ViewCases} />,
+			},
+			{
+				path: "cases/view/:id",
+				element: <AuthGuard element={ViewCaseDetails} />,
+			},
+			{
+				path: "cases/add",
+				element: <AuthGuard element={AddCases} />,
+			},
+			{
+				path: "history/users",
+				element: <AdminGuard element={UserHistory} />,
+			},
+			{
+				path: "history/search",
+				element: <AdminGuard element={SearchHistory} />,
+			},
+			{
+				path: "/history/upload",
+				element: <AdminGuard element={UploadHistory} />,
+			},
+			{
+				path: "/edit-user/:id", // Route for editing user
+				element: <AdminGuard element={UpdateUser} />,
+			},
+		],
+	},
+	{
+		path: "/login",
+		element: <Login />,
+	},
+	{
+		path: "*",
+		element: <Login />, // This will redirect to login for any unmatched routes
+	},
 ]);
 
 export default router;

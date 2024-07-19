@@ -5,12 +5,17 @@ import ActionButton from "../../../components/Button/ActionButton";
 import { useLazyGetSearchDataQuery } from "../../../api/search";
 import { toast } from "react-toastify";
 
-const fields = [
+const alwaysVisibleFields = [
 	{ name: "first_name", label: "First Name" },
+	{ name: "dob", label: "DOB" },
+	{ name: "mobile1", label: "Phone Number" },
+	{ name: "pan_number", label: "Pan Number" },
+];
+
+const checkboxFields = [
 	{ name: "middle_name", label: "Middle Name" },
 	{ name: "last_name", label: "Last Name" },
 	{ name: "father_name", label: "Father Name" },
-	{ name: "dob", label: "DOB" },
 	{ name: "login_date", label: "Login Date" },
 	{ name: "residence_address", label: "Residence Address" },
 	{ name: "residence_area", label: "Residence Area" },
@@ -19,7 +24,6 @@ const fields = [
 	{ name: "compnay_area_name", label: "Company Area" }, // Typo in backend "compnay_area_name"
 	{ name: "email_id", label: "Email ID" },
 	{ name: "aadhar_number", label: "Aadhar Number" },
-	{ name: "pan_number", label: "Pan Number" },
 	{ name: "passport_number", label: "Passport Number" },
 	{ name: "election_id_number", label: "Election ID Number" },
 	{ name: "vehicle_number", label: "Vehicle Number" },
@@ -34,7 +38,7 @@ const fields = [
 	{ name: "company_pincode", label: "Company Pincode" },
 	{ name: "company_state_name", label: "Company State" },
 	{ name: "status_name", label: "Status" },
-];
+].sort((a, b) => a.label.localeCompare(b.label));
 
 const ViewCases = () => {
 	const [formData, setFormData] = useState({});
@@ -70,7 +74,10 @@ const ViewCases = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setRecords([]); // Clear previous records
-		const fieldNames = Object.keys(formData).filter((key) => formData[key]);
+		const fieldNames = [
+			...alwaysVisibleFields.map((f) => f.name),
+			...Object.keys(formData).filter((key) => formData[key]),
+		];
 
 		if (fieldNames.length === 0) {
 			toast.error("Please fill in at least one search field.");
@@ -100,7 +107,7 @@ const ViewCases = () => {
 	};
 
 	const handleNavigate = (id) => {
-		navigate(`/case/${id}`);
+		navigate(`/cases/view/${id}`);
 	};
 
 	const formatDate = (dateString) => {
@@ -127,7 +134,7 @@ const ViewCases = () => {
 		<div className="flex flex-col gap-6">
 			<h3 className="text-xl font-bold text-gray-800">Search</h3>
 			<div className="grid grid-cols-6 gap-2">
-				{fields.map((field) => (
+				{checkboxFields.map((field) => (
 					<div key={field.name} className="flex items-center gap-2">
 						<input
 							type="checkbox"
@@ -141,10 +148,23 @@ const ViewCases = () => {
 			</div>
 			<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 				<div className="grid w-full grid-cols-3 gap-4">
+					{alwaysVisibleFields.map((field) => (
+						<InputParent key={field.name}>
+							<label className="text-sm">{field.label}</label>
+							<input
+								type="text"
+								name={field.name}
+								value={formData[field.name] || ""}
+								onChange={handleInputChange}
+								className="w-full p-2 border border-gray-300"
+								placeholder={field.label}
+							/>
+						</InputParent>
+					))}
 					{selectedFields.map((field) => (
 						<InputParent key={field}>
 							<label className="text-sm">
-								{fields.find((f) => f.name === field).label}
+								{checkboxFields.find((f) => f.name === field).label}
 							</label>
 							<input
 								type="text"
@@ -152,7 +172,7 @@ const ViewCases = () => {
 								value={formData[field] || ""}
 								onChange={handleInputChange}
 								className="w-full p-2 border border-gray-300"
-								placeholder={fields.find((f) => f.name === field).label}
+								placeholder={checkboxFields.find((f) => f.name === field).label}
 							/>
 						</InputParent>
 					))}
@@ -168,11 +188,27 @@ const ViewCases = () => {
 						<table className="min-w-full text-sm text-left text-gray-500">
 							<thead className="bg-gray-50">
 								<tr>
-									{limitedFields.map((field) => (
-										<th key={field} scope="col" className="px-6 py-3">
-											{field.replace(/_/g, " ")}
-										</th>
-									))}
+									<th scope="col" className="px-6 py-3">
+										Client
+									</th>
+									<th scope="col" className="px-6 py-3">
+										Product
+									</th>
+									<th scope="col" className="px-6 py-3">
+										First Name
+									</th>
+									<th scope="col" className="px-6 py-3">
+										Status
+									</th>
+									<th scope="col" className="px-6 py-3">
+										DOB
+									</th>
+									<th scope="col" className="px-6 py-3">
+										Phone Number
+									</th>
+									<th scope="col" className="px-6 py-3">
+										PAN Number
+									</th>
 									<th scope="col" className="px-6 py-3">
 										Action
 									</th>
@@ -181,28 +217,13 @@ const ViewCases = () => {
 							<tbody>
 								{records.map((record, index) => (
 									<tr key={index} className="bg-white border-b">
-										{limitedFields.map((field) => (
-											<td
-												key={field}
-												className={`px-6 py-4 ${
-													field === "remarks"
-														? "max-w-[80px] overflow-hidden text-ellipsis"
-														: ""
-												}`}
-												style={
-													field === "remarks"
-														? {
-																width: "80px",
-																height: "80px",
-																whiteSpace: "nowrap",
-														  }
-														: {}
-												}>
-												{field === "dob"
-													? formatDate(record[field])
-													: record[field]}
-											</td>
-										))}
+										<td className="px-6 py-4">{record.client_name}</td>
+										<td className="px-6 py-4">{record.product_name}</td>
+										<td className="px-6 py-4">{record.first_name}</td>
+										<td className="px-6 py-4">{record.status_name}</td>
+										<td className="px-6 py-4">{formatDate(record.dob)}</td>
+										<td className="px-6 py-4">{record.mobile1}</td>
+										<td className="px-6 py-4">{record.pan_number}</td>
 										<td className="px-6 py-4">
 											<button
 												className="px-4 py-2 text-white bg-blue-500 rounded"

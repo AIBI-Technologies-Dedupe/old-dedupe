@@ -76,7 +76,7 @@ const ViewCaseDetails = () => {
 			</div>
 			<div className="grid grid-cols-2 gap-4">
 				{displayFields
-					.filter((field) => field.value)
+					.filter((field) => field.value && field.value !== "NULL")
 					.map((field, index) => (
 						<div key={index} className="flex flex-col">
 							<span className="font-bold text-gray-700">{field.label}</span>
@@ -88,7 +88,7 @@ const ViewCaseDetails = () => {
 						</div>
 					))}
 			</div>
-			{record.remarks && (
+			{record.remarks && record.remarks !== "NULL" && (
 				<div className="flex flex-col mt-4">
 					<span className="font-bold text-gray-700">Remarks</span>
 					<span className="text-gray-600">{record.remarks}</span>

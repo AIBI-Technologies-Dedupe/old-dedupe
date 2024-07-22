@@ -32,7 +32,11 @@ const AddCases = () => {
 			toast.success("File uploaded successfully!");
 			navigate("/");
 		} catch (error) {
-			toast.error("Error occurred while uploading the file.");
+			if (error.data.error) {
+				toast.error(error.data.error);
+			} else {
+				toast.error("Error occurred while uploading the file.");
+			}
 		}
 	};
 

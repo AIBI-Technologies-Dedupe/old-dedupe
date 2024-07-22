@@ -84,6 +84,11 @@ const ViewCases = () => {
 			return;
 		}
 
+		// Convert dob to the correct format
+		if (formData.dob) {
+			const date = new Date(formData.dob);
+		}
+
 		try {
 			const response = await triggerSearch({
 				field_name: fieldNames,
@@ -151,14 +156,25 @@ const ViewCases = () => {
 					{alwaysVisibleFields.map((field) => (
 						<InputParent key={field.name}>
 							<label className="text-sm">{field.label}</label>
-							<input
-								type="text"
-								name={field.name}
-								value={formData[field.name] || ""}
-								onChange={handleInputChange}
-								className="w-full p-2 border border-gray-300"
-								placeholder={field.label}
-							/>
+							{field.name === "dob" ? (
+								<input
+									type="date"
+									name={field.name}
+									value={formData[field.name] || ""}
+									onChange={handleInputChange}
+									className="w-full p-2 border border-gray-300"
+									placeholder={field.label}
+								/>
+							) : (
+								<input
+									type="text"
+									name={field.name}
+									value={formData[field.name] || ""}
+									onChange={handleInputChange}
+									className="w-full p-2 border border-gray-300"
+									placeholder={field.label}
+								/>
+							)}
 						</InputParent>
 					))}
 					{selectedFields.map((field) => (

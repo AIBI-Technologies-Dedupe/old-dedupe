@@ -5,14 +5,11 @@ import ActionButton from "../../../components/Button/ActionButton";
 import { useLazyGetSearchDataQuery } from "../../../api/search";
 import { toast } from "react-toastify";
 
-const alwaysVisibleFields = [
+const checkboxFields = [
 	{ name: "first_name", label: "First Name" },
 	{ name: "dob", label: "DOB" },
 	{ name: "mobile1", label: "Phone Number" },
 	{ name: "pan_number", label: "Pan Number" },
-];
-
-const checkboxFields = [
 	{ name: "middle_name", label: "Middle Name" },
 	{ name: "last_name", label: "Last Name" },
 	{ name: "father_name", label: "Father Name" },
@@ -74,19 +71,11 @@ const ViewCases = () => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setRecords([]); // Clear previous records
-		const fieldNames = [
-			...alwaysVisibleFields.map((f) => f.name),
-			...Object.keys(formData).filter((key) => formData[key]),
-		];
+		const fieldNames = Object.keys(formData).filter((key) => formData[key]);
 
 		if (fieldNames.length === 0) {
 			toast.error("Please fill in at least one search field.");
 			return;
-		}
-
-		// Convert dob to the correct format
-		if (formData.dob) {
-			const date = new Date(formData.dob);
 		}
 
 		try {
@@ -153,14 +142,16 @@ const ViewCases = () => {
 			</div>
 			<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 				<div className="grid w-full grid-cols-3 gap-4">
-					{alwaysVisibleFields.map((field) => (
-						<InputParent key={field.name}>
-							<label className="text-sm">{field.label}</label>
-							{field.name === "dob" ? (
+					{selectedFields.map((field) => (
+						<InputParent key={field}>
+							<label className="text-sm">
+								{checkboxFields.find((f) => f.name === field).label}
+							</label>
+							{field === "dob" ? (
 								<input
 									type="date"
-									name={field.name}
-									value={formData[field.name] || ""}
+									name={field}
+									value={formData[field] || ""}
 									onChange={handleInputChange}
 									className="w-full p-2 border border-gray-300"
 									placeholder={field.label}
@@ -168,28 +159,13 @@ const ViewCases = () => {
 							) : (
 								<input
 									type="text"
-									name={field.name}
-									value={formData[field.name] || ""}
+									name={field}
+									value={formData[field] || ""}
 									onChange={handleInputChange}
 									className="w-full p-2 border border-gray-300"
 									placeholder={field.label}
 								/>
 							)}
-						</InputParent>
-					))}
-					{selectedFields.map((field) => (
-						<InputParent key={field}>
-							<label className="text-sm">
-								{checkboxFields.find((f) => f.name === field).label}
-							</label>
-							<input
-								type="text"
-								name={field}
-								value={formData[field] || ""}
-								onChange={handleInputChange}
-								className="w-full p-2 border border-gray-300"
-								placeholder={checkboxFields.find((f) => f.name === field).label}
-							/>
 						</InputParent>
 					))}
 				</div>
@@ -205,6 +181,9 @@ const ViewCases = () => {
 							<thead className="bg-gray-50">
 								<tr>
 									<th scope="col" className="px-6 py-3">
+										No.
+									</th>
+									<th scope="col" className="px-6 py-3">
 										Client
 									</th>
 									<th scope="col" className="px-6 py-3">
@@ -215,9 +194,6 @@ const ViewCases = () => {
 									</th>
 									<th scope="col" className="px-6 py-3">
 										Status
-									</th>
-									<th scope="col" className="px-6 py-3">
-										DOB
 									</th>
 									<th scope="col" className="px-6 py-3">
 										Phone Number
@@ -233,11 +209,11 @@ const ViewCases = () => {
 							<tbody>
 								{records.map((record, index) => (
 									<tr key={index} className="bg-white border-b">
+										<td className="px-6 py-4">{index + 1}</td>
 										<td className="px-6 py-4">{record.client_name}</td>
 										<td className="px-6 py-4">{record.product_name}</td>
 										<td className="px-6 py-4">{record.first_name}</td>
 										<td className="px-6 py-4">{record.status_name}</td>
-										<td className="px-6 py-4">{formatDate(record.dob)}</td>
 										<td className="px-6 py-4">{record.mobile1}</td>
 										<td className="px-6 py-4">{record.pan_number}</td>
 										<td className="px-6 py-4">

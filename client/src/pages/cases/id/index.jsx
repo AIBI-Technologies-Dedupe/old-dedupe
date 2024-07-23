@@ -26,11 +26,9 @@ const ViewCaseDetails = () => {
 	}
 
 	const displayFields = [
-		{ label: "Client Name", value: record.client_name },
+		{ label: "Client", value: record.client_name },
 		{ label: "Product Name", value: record.product_name },
 		{ label: "First Name", value: record.first_name },
-		{ label: "Middle Name", value: record.middle_name },
-		{ label: "Last Name", value: record.last_name },
 		{ label: "Father Name", value: record.father_name },
 		{ label: "DOB", value: record.dob },
 		{ label: "Login Date", value: record.login_date },
@@ -38,7 +36,7 @@ const ViewCaseDetails = () => {
 		{ label: "Residence Area", value: record.residence_area },
 		{ label: "Company Name", value: record.company_name },
 		{ label: "Office Address", value: record.office_address },
-		{ label: "Company Area Name", value: record.compnay_area_name },
+		{ label: "Company Area", value: record.compnay_area_name },
 		{ label: "Email ID", value: record.email_id },
 		{ label: "Aadhar Number", value: record.aadhar_number },
 		{ label: "PAN Number", value: record.pan_number },
@@ -46,13 +44,13 @@ const ViewCaseDetails = () => {
 		{ label: "Election ID Number", value: record.election_id_number },
 		{ label: "Vehicle Number", value: record.vehicle_number },
 		{ label: "DL Number", value: record.dl_number },
-		{ label: "Residence City Name", value: record.residence_city_name },
-		{ label: "Residence State Name", value: record.residence_state_name },
+		{ label: "Residence City", value: record.residence_city_name },
+		{ label: "Residence State", value: record.residence_state_name },
 		{ label: "Residence Pincode", value: record.residence_pincode },
-		{ label: "Company City Name", value: record.company_city_name },
+		{ label: "Company City", value: record.company_city_name },
 		{ label: "Company Pincode", value: record.company_pincode },
-		{ label: "Company State Name", value: record.company_state_name },
-		{ label: "Status Name", value: record.status_name },
+		{ label: "Company State", value: record.company_state_name },
+		{ label: "Status", value: record.status_name },
 		{ label: "Phone Number", value: record.mobile1 },
 	];
 

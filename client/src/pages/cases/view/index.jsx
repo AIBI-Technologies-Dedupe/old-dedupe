@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import InputParent from "../../../components/Input/Parent";
 import ActionButton from "../../../components/Button/ActionButton";
@@ -37,15 +37,34 @@ const checkboxFields = [
 	{ name: "status_name", label: "Status" },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
+let globalState = {
+	records: [],
+	selectedFields: [],
+	formData: {},
+	currentPage: 1,
+	totalPages: 1,
+};
+
 const ViewCases = () => {
-	const [formData, setFormData] = useState({});
-	const [selectedFields, setSelectedFields] = useState([]);
-	const [currentPage, setCurrentPage] = useState(1);
+	const [formData, setFormData] = useState(globalState.formData);
+	const [selectedFields, setSelectedFields] = useState(globalState.selectedFields);
+	const [currentPage, setCurrentPage] = useState(globalState.currentPage);
 	const rowsPerPage = 10;
 	const [triggerSearch, { isLoading }] = useLazyGetSearchDataQuery();
-	const [records, setRecords] = useState([]);
-	const [totalPages, setTotalPages] = useState(1);
+	const [records, setRecords] = useState(globalState.records);
+	const [totalPages, setTotalPages] = useState(globalState.totalPages);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		// Sync local state with global state when component mounts
+		globalState = {
+			records,
+			selectedFields,
+			formData,
+			currentPage,
+			totalPages,
+		};
+	}, [records, selectedFields, formData, currentPage, totalPages]);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;

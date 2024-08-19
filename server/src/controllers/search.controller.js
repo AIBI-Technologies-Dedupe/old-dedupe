@@ -105,6 +105,27 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 	}
 
 	try {
+		// Find existing search history entry for today
+		let searchHistory = await db.search_history.findOne({
+			where: {
+				user_id: user_id,
+				searchdate: today,
+			},
+		});
+
+		if (searchHistory) {
+			// If found, increment searchCount
+			searchHistory.searchCount += 1;
+			await searchHistory.save();
+		} else {
+			// If not found, create new search history entry
+			searchHistory = await db.search_history.create({
+				user_id,
+				searchdate: today,
+				searchCount: 1,
+			});
+		}
+
 		// Query the database with pagination
 		const records = await db.raw_data.findAndCountAll({
 			where: { [Op.and]: conditions },
@@ -144,27 +165,6 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 		const user_id = req.user.id;
 		const today = new Date();
 		today.setUTCHours(0, 0, 0, 0);
-
-		// Find existing search history entry for today
-		let searchHistory = await db.search_history.findOne({
-			where: {
-				user_id: user_id,
-				searchdate: today,
-			},
-		});
-
-		if (searchHistory) {
-			// If found, increment searchCount
-			searchHistory.searchCount += 1;
-			await searchHistory.save();
-		} else {
-			// If not found, create new search history entry
-			searchHistory = await db.search_history.create({
-				user_id,
-				searchdate: today,
-				searchCount: 1,
-			});
-		}
 
 		// Return records with success message
 		res.json({

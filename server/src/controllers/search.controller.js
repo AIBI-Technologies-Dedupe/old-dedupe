@@ -105,6 +105,11 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 	}
 
 	try {
+		// Increment search count in search history
+		const user_id = req.user.id;
+		const today = new Date();
+		today.setUTCHours(0, 0, 0, 0);
+
 		// Find existing search history entry for today
 		let searchHistory = await db.search_history.findOne({
 			where: {
@@ -160,11 +165,6 @@ exports.searchRecords = asyncHandler(async (req, res) => {
 			pan_number: record.pan_number,
 			status_name: record.status ? record.status.name : null,
 		}));
-
-		// Increment search count in search history
-		const user_id = req.user.id;
-		const today = new Date();
-		today.setUTCHours(0, 0, 0, 0);
 
 		// Return records with success message
 		res.json({

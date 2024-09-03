@@ -61,7 +61,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 			return res.status(400).json({ error: error.details[0].message });
 		}
 
-		const user = await db.user.findOne({ where: { email } });
+		const user = await db.user.findOne({ where: { email, activated: true } });
 		if (!user) {
 			return res.status(401).json({ error: "Invalid email or password" });
 		}

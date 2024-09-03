@@ -7,7 +7,6 @@ const {
 	refresh,
 	updateUser,
 	deleteUser,
-	disableUser,
 	getAllUsers,
 	logout,
 	getCount,
@@ -17,8 +16,7 @@ router.post("/signup", createUser); // for development purposes
 router.post("/createuser", verifyJWT, checkAdmin, createUser);
 router.post("/login", login);
 router.post("/refresh", verifyJWT, refresh);
-router.delete("/delete", verifyJWT, checkAdmin, deleteUser); // Hard delete
-router.delete("/disable", verifyJWT, checkAdmin, disableUser); // Soft delete
+router.delete("/delete/:id", verifyJWT, checkAdmin, deleteUser); // Hard delete
 router.put("/update", verifyJWT, checkAdmin, updateUser);
 router.get("/count", verifyJWT, checkAdmin, getCount);
 router.get("/getusers", verifyJWT, checkAdmin, getAllUsers);

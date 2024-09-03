@@ -10,6 +10,7 @@ const {
 	comparePassword,
 } = require("../utils/authUtils");
 const logger = require("../configs/loggerConfig");
+const { where } = require("sequelize");
 
 exports.createUser = asyncHandler(async (req, res, next) => {
 	try {
@@ -99,7 +100,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 		const accessToken = jwt.sign(
 			{ UserInfo: { id: user.id, email: user.email, role: user.role } },
-			process.env.ACCESS_TOKEN_SECRET,
+			process.env.ACCESS_TOKEN_SECRET
 		);
 
 		const refreshToken = jwt.sign(
@@ -173,7 +174,7 @@ exports.refresh = asyncHandler(async (req, res, next) => {
 
 exports.getAllUsers = asyncHandler(async (req, res, next) => {
 	try {
-		const users = await db.user.findAll();
+		const users = await db.user.findAll({ where: { activated: true } });
 		res.status(200).json({ message: "Users retrieved successfully", users });
 	} catch (error) {
 		logger.error("Get All Users Error:", error);
@@ -220,12 +221,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
 exports.deleteUser = asyncHandler(async (req, res, next) => {
 	try {
-		const { id } = req.body;
-
-		const { error } = deleteUserSchema.validate({ id });
-		if (error) {
-			return res.status(400).json({ error: error.details[0].message });
-		}
+		const id = req.params.id;
 
 		const user = await db.user.findOne({ where: { id } });
 		if (!user) {

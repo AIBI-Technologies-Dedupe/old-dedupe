@@ -13,7 +13,7 @@ const historyRoutes = require("./routes/history.routes");
 const adminRoutes = require("./routes/admin.routes");
 
 app.use(morgan("dev"));
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(express.json());
 app.use(cookieparser());
 app.use(express.urlencoded({ extended: true }));

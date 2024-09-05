@@ -13,7 +13,7 @@ const historyRoutes = require("./routes/history.routes");
 const adminRoutes = require("./routes/admin.routes");
 
 app.use(morgan("dev"));
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(cookieparser());
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +23,6 @@ app.use("/data", dataRoutes);
 app.use("/search", searchRoutes);
 app.use("/history", historyRoutes);
 app.use("/admin", adminRoutes);
-
 
 app.use((err, req, res, next) => {
 	logger.error("Express Error:", err);

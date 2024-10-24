@@ -1,0 +1,22 @@
+enum Action {
+  SEARCH
+  UPLOAD
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String
+  name      String
+  password  String
+  history   History[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  by        User     @relation(fields: [user_id], references: [id])
+  action    Action
+  createdAt DateTime @default(now())
+}

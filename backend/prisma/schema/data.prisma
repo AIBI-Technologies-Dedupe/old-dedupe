@@ -1,0 +1,75 @@
+model Data {
+  id           Int             @id @default(autoincrement())
+  client_id    Int
+  client       Client          @relation(fields: [client_id], references: [id])
+  product_id   Int
+  product      Product         @relation(fields: [product_id], references: [id])
+  login_date   DateTime
+  first_name   String
+  middle_name  String
+  last_name    String
+  father_name  String
+  dob          DateTime
+  residence_id Int
+  residence    Address         @relation("Home", fields: [residence_id], references: [id])
+  office_id    Int
+  office       Address         @relation("Office", fields: [office_id], references: [id])
+  details_id   Int
+  details      PersonalDetails @relation(fields: [details_id], references: [id])
+  remarks      String
+}
+
+model Client {
+  id          Int    @id @default(autoincrement())
+  client_id   Int
+  client_data Data[]
+}
+
+model Product {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  data Data[]
+}
+
+model PersonalDetails {
+  id               Int    @id @default(autoincrement())
+  mobile1          Int
+  mobile2          Int
+  email            String
+  aadhar_number    String
+  pan_number       String
+  passport_number  String
+  election_numbeer String
+  vehicle_number   String
+  dl_number        String
+  Data             Data[]
+}
+
+model Status {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Address {
+  id           Int    @id @default(autoincrement())
+  door_no      String
+  address_line String
+  area         String
+  landline     String
+  office       Data[] @relation("Office")
+  home         Data[] @relation("Home")
+}
+
+model City {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model State {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Pincode {
+  id Int @unique
+}

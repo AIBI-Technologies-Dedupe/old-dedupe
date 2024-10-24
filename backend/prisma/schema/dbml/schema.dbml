@@ -1,0 +1,114 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Data {
+  id Int [pk, increment]
+  client_id Int [not null]
+  client Client [not null]
+  product_id Int [not null]
+  product Product [not null]
+  login_date DateTime [not null]
+  first_name String [not null]
+  middle_name String [not null]
+  last_name String [not null]
+  father_name String [not null]
+  dob DateTime [not null]
+  residence_id Int [not null]
+  residence Address [not null]
+  office_id Int [not null]
+  office Address [not null]
+  details_id Int [not null]
+  details PersonalDetails [not null]
+  remarks String [not null]
+}
+
+Table Client {
+  id Int [pk, increment]
+  client_id Int [not null]
+  client_data Data [not null]
+}
+
+Table Product {
+  id Int [pk, increment]
+  name String [unique, not null]
+  data Data [not null]
+}
+
+Table PersonalDetails {
+  id Int [pk, increment]
+  mobile1 Int [not null]
+  mobile2 Int [not null]
+  email String [not null]
+  aadhar_number String [not null]
+  pan_number String [not null]
+  passport_number String [not null]
+  election_numbeer String [not null]
+  vehicle_number String [not null]
+  dl_number String [not null]
+  Data Data [not null]
+}
+
+Table Status {
+  id Int [pk, increment]
+  name String [not null]
+}
+
+Table Address {
+  id Int [pk, increment]
+  door_no String [not null]
+  address_line String [not null]
+  area String [not null]
+  landline String [not null]
+  office Data [not null]
+  home Data [not null]
+}
+
+Table City {
+  id Int [pk, increment]
+  name String [not null]
+}
+
+Table State {
+  id Int [pk, increment]
+  name String [not null]
+}
+
+Table Pincode {
+  id Int [unique, not null]
+}
+
+Table User {
+  id Int [pk, increment]
+  email String [not null]
+  name String [not null]
+  password String [not null]
+  history History [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table History {
+  id Int [pk, increment]
+  user_id Int [not null]
+  by User [not null]
+  action Action [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Enum Action {
+  SEARCH
+  UPLOAD
+}
+
+Ref: Data.client_id > Client.id
+
+Ref: Data.product_id > Product.id
+
+Ref: Data.residence_id > Address.id
+
+Ref: Data.office_id > Address.id
+
+Ref: Data.details_id > PersonalDetails.id
+
+Ref: History.user_id > User.id

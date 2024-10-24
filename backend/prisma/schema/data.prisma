@@ -16,6 +16,8 @@ model Data {
   office       Address         @relation("Office", fields: [office_id], references: [id])
   details_id   Int
   details      PersonalDetails @relation(fields: [details_id], references: [id])
+  status_id    Int
+  status       Status          @relation(fields: [status_id], references: [id])
   remarks      String
 }
 
@@ -48,16 +50,21 @@ model PersonalDetails {
 model Status {
   id   Int    @id @default(autoincrement())
   name String
+  Data Data[]
 }
 
 model Address {
-  id           Int    @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   door_no      String
   address_line String
   area         String
+  state_id     Int
+  state        State   @relation(fields: [state_id], references: [id])
   landline     String
-  office       Data[] @relation("Office")
-  home         Data[] @relation("Home")
+  office       Data[]  @relation("Office")
+  home         Data[]  @relation("Home")
+  pincode_id   Int
+  pincode      Pincode @relation(fields: [pincode_id], references: [id])
 }
 
 model City {
@@ -66,10 +73,12 @@ model City {
 }
 
 model State {
-  id   Int    @id @default(autoincrement())
-  name String
+  id      Int       @id @default(autoincrement())
+  name    String
+  Address Address[]
 }
 
 model Pincode {
-  id Int @unique
+  id      Int       @unique
+  Address Address[]
 }

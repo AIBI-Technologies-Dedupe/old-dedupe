@@ -58,6 +58,8 @@ model Address {
   door_no      String
   address_line String
   area         String
+  city_id      Int
+  city         City    @relation(fields: [city_id], references: [id])
   state_id     Int
   state        State   @relation(fields: [state_id], references: [id])
   landline     String
@@ -68,8 +70,9 @@ model Address {
 }
 
 model City {
-  id   Int    @id @default(autoincrement())
-  name String
+  id      Int       @id @default(autoincrement())
+  name    String
+  Address Address[]
 }
 
 model State {

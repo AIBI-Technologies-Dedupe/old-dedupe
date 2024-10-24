@@ -20,6 +20,8 @@ Table Data {
   office Address [not null]
   details_id Int [not null]
   details PersonalDetails [not null]
+  status_id Int [not null]
+  status Status [not null]
   remarks String [not null]
 }
 
@@ -52,6 +54,7 @@ Table PersonalDetails {
 Table Status {
   id Int [pk, increment]
   name String [not null]
+  Data Data [not null]
 }
 
 Table Address {
@@ -59,23 +62,32 @@ Table Address {
   door_no String [not null]
   address_line String [not null]
   area String [not null]
+  city_id Int [not null]
+  city City [not null]
+  state_id Int [not null]
+  state State [not null]
   landline String [not null]
   office Data [not null]
   home Data [not null]
+  pincode_id Int [not null]
+  pincode Pincode [not null]
 }
 
 Table City {
   id Int [pk, increment]
   name String [not null]
+  Address Address [not null]
 }
 
 Table State {
   id Int [pk, increment]
   name String [not null]
+  Address Address [not null]
 }
 
 Table Pincode {
   id Int [unique, not null]
+  Address Address [not null]
 }
 
 Table User {
@@ -110,5 +122,13 @@ Ref: Data.residence_id > Address.id
 Ref: Data.office_id > Address.id
 
 Ref: Data.details_id > PersonalDetails.id
+
+Ref: Data.status_id > Status.id
+
+Ref: Address.city_id > City.id
+
+Ref: Address.state_id > State.id
+
+Ref: Address.pincode_id > Pincode.id
 
 Ref: History.user_id > User.id
